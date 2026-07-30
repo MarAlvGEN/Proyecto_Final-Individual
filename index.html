@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>TODO APP</title>
+
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+            crossorigin="anonymous"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+        />
+        <link rel="stylesheet" href="./css/style.css" />
+    </head>
+
+    <body>
+        <div class="container-fluid vh-100">
+            <div class="row h-100">
+                <!-- izq -->
+                <aside
+                    class="col-md-2 bg-secondary text-white p-4 d-flex flex-column justify-content-between"
+                    aria-label="Left"
+                >
+                    <div>
+                        <h1 class="fw-bold mb-4">TODO APP</h1>
+                        <h2 class="mb-3">Listas:</h2>
+
+                        <!-- lsitas personalizadas -->
+                        <div class="d-grid gap-2">
+                            <button
+                                class="btn btn-teal text-white fw-semibold py-2"
+                            >
+                                Compras
+                            </button>
+                            <button
+                                class="btn btn-teal text-white fw-semibold py-2"
+                            >
+                                Compras
+                            </button>
+                            <button
+                                class="btn btn-teal text-white fw-semibold py-2"
+                            >
+                                Compras
+                            </button>
+                            <button
+                                class="btn btn-teal text-white fw-semibold py-2"
+                            >
+                                Compras
+                            </button>
+                        </div>
+                    </div>
+
+                    <footer class="fw-bold small text-center">
+                        by Mauricio
+                    </footer>
+                </aside>
+
+                <!-- centro -->
+                <main
+                    class="col-md-8 bg-dark text-white p-4 d-flex flex-column"
+                >
+                    <!-- titulo -->
+                    <header class="d-flex align-items-center mb-4">
+                        <h2 class="display-4 me-4 fw-light">JUL 30</h2>
+                        <div>
+                            <h3 class="h3 mb-0">Buenos días/Tardes/Noches</h3>
+                            <p class="mb-0 h4 text-secondary">
+                                Tus tareas de hoy
+                            </p>
+                        </div>
+                    </header>
+
+                    <!-- buscador -->
+                    <div class="input-group mb-4">
+                        <input
+                            type="text"
+                            class="form-control rounded-pill-start bg-secondary text-white border-0 px-4"
+                            placeholder="Buscar tarea..."
+                        />
+                        <button
+                            class="btn btn-teal rounded-pill-end px-4 text-white fw-bold"
+                            type="button"
+                        >
+                            Buscar
+                        </button>
+                    </div>
+
+                    <!-- tareas -->
+                    <section class="task-list d-flex flex-column gap-3">
+                        <div
+                            class="card bg-purple text-white p-3 border-0 rounded-4 card-custom"
+                        >
+                            <div class="card-body py-1 text-center">
+                                Tarea 1
+                            </div>
+                        </div>
+                        <div
+                            class="card bg-purple text-white p-3 border-0 rounded-4 card-custom"
+                        >
+                            <div class="card-body py-1 text-center">
+                                Tarea 2
+                            </div>
+                        </div>
+                        <div
+                            class="card bg-purple text-white p-3 border-0 rounded-4 card-custom"
+                        >
+                            <div class="card-body py-1 text-center">
+                                Tarea 3
+                            </div>
+                        </div>
+                    </section>
+                </main>
+
+                <aside
+                    class="col-md-2 bg-secondary text-white p-4 d-flex align-items-end justify-content-center"
+                    aria-label="Right"
+                >
+                    <i class="bi bi-calendar-week display-1 text-dark"></i>
+                </aside>
+            </div>
+        </div>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+            crossorigin="anonymous"
+            defer
+        ></script>
+    </body>
+</html>

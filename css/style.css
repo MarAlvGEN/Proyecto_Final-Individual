@@ -1,0 +1,27 @@
+.bg-teal,
+.btn-teal {
+    background-color: #13887a;
+}
+
+.card-custom {
+    cursor: pointer;
+}
+
+.btn-teal:hover,
+.card-custom:hover {
+    background-color: #0f6c61;
+}
+
+.bg-purple {
+    background-color: #5651e7;
+}
+
+.rounded-pill-start {
+    border-top-left-radius: 50px;
+    border-bottom-left-radius: 50px;
+}
+
+.rounded-pill-end {
+    border-top-right-radius: 50px;
+    border-bottom-right-radius: 50px;
+}
