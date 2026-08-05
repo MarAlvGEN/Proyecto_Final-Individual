@@ -1,27 +1,152 @@
+/* Variables de diseño */
+:root {
+  --bg-card: rgba(255, 255, 255, 0.05);
+  --border-card: rgba(255, 255, 255, 0.12);
+  --text-primary: #ffffff;
+  --text-secondary: #a0aec0;
+
+  --status-pending-bg: rgba(236, 201, 75, 0.15);
+  --status-pending-color: #f6e05e;
+
+  --status-progress-bg: rgba(66, 153, 225, 0.15);
+  --status-progress-color: #63b3ed;
+
+  --status-completed-bg: rgba(72, 187, 120, 0.15);
+  --status-completed-color: #68d391;
+
+  --status-urgent-bg: rgba(245, 101, 101, 0.15);
+  --status-urgent-color: #fc8181;
+}
+
+/* TODO: ACTUALIZAR COLORES */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .bg-teal,
 .btn-teal {
-    background-color: #13887a;
+  background-color: #13887a;
 }
 
 .card-custom {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .btn-teal:hover,
 .card-custom:hover {
-    background-color: #0f6c61;
+  background-color: #0f6c61;
 }
 
 .bg-purple {
-    background-color: #5651e7;
+  background-color: #5651e7;
 }
 
 .rounded-pill-start {
-    border-top-left-radius: 50px;
-    border-bottom-left-radius: 50px;
+  border-top-left-radius: 50px;
+  border-bottom-left-radius: 50px;
 }
 
 .rounded-pill-end {
-    border-top-right-radius: 50px;
-    border-bottom-right-radius: 50px;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
+}
+
+.task-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-card);
+  backdrop-filter: blur(10px);
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.task-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.task-title {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+}
+
+.task-desc {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.task-date {
+  color: var(--text-secondary);
+  font-size: 0.825rem;
+  border-top: 1px solid var(--border-card);
+  padding-top: 0.5rem;
+}
+
+.task-status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.status-pending {
+  background-color: var(--status-pending-bg);
+  color: var(--status-pending-color);
+  border: 1px solid rgba(246, 224, 94, 0.3);
+}
+
+.status-progress {
+  background-color: var(--status-progress-bg);
+  color: var(--status-progress-color);
+  border: 1px solid rgba(99, 179, 237, 0.3);
+}
+
+.status-completed {
+  background-color: var(--status-completed-bg);
+  color: var(--status-completed-color);
+  border: 1px solid rgba(104, 211, 145, 0.3);
+}
+
+.status-urgent {
+  background-color: var(--status-urgent-bg);
+  color: var(--status-urgent-color);
+  border: 1px solid rgba(252, 129, 129, 0.3);
+}
+
+.task-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.task-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* TODO: CHEQUEAR EL MIN VH EN MOBILE */
+
+@media (min-width: 992px) {
+  body {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .h-lg-100 {
+    height: 100% !important;
+  }
+
+  .main-wrapper {
+    height: 100% !important;
+  }
+}
+
+.task-list {
+  max-height: none;
 }
