@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TODO APP</title>
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap & Icons -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -17,212 +26,414 @@
   </head>
 
   <body>
-    <div class="container-fluid p-0 h-lg-100">
-      <div class="row g-0 flex-lg-nowrap h-lg-100">
+    <!-- FONDO TO WAPO XD -->
+    <div class="bg-glow-orb orb-1"></div>
+    <div class="bg-glow-orb orb-2"></div>
+
+    <div class="container-fluid p-0 h-lg-100 position-relative z-1">
+      <div class="row g-0 flex-lg-nowrap h-lg-100 align-items-stretch">
         <!-- Izquierda -->
         <aside
-          class="col-12 col-lg-2 bg-secondary text-white p-4 d-flex flex-column justify-content-between h-lg-100"
+          class="col-12 col-lg-2 p-4 d-flex flex-column justify-content-between h-lg-100 sidebar-panel"
           aria-label="Left"
         >
           <div>
-            <h1 class="fw-bold mb-4">TODO APP</h1>
-            <h2 class="mb-3">Listas:</h2>
-
-            <div class="d-grid gap-2">
-              <button class="btn btn-teal text-white fw-semibold py-2">
-                Compras
-              </button>
-              <button class="btn btn-teal text-white fw-semibold py-2">
-                Compras
-              </button>
-              <button class="btn btn-teal text-white fw-semibold py-2">
-                Compras
-              </button>
-              <button class="btn btn-teal text-white fw-semibold py-2">
-                Compras
+            <div class="brand-header mb-4">
+              <h1 class="fw-black m-0 brand-title">
+                <i class="bi bi-shield-slash-fill me-2 color-accent"></i
+                >TODO<span class="color-accent">.</span>
+              </h1>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h2 class="h6 text-uppercase tracking-wider fw-bold mb-0">
+                Listas
+              </h2>
+              <button
+                class="btn btn-crimson btn-sm rounded-circle btn-icon-pulse"
+                data-bs-toggle="modal"
+                data-bs-target="#newListModal"
+                title="Crear Lista"
+              >
+                <i class="bi bi-plus-lg"></i>
               </button>
             </div>
+
+            <div id="listsContainer" class="d-grid gap-2"></div>
           </div>
 
-          <footer class="fw-bold small text-center mt-4 mt-lg-0">
-            by Mauricio
+          <footer class="fw-semibold small text-center mt-4 mt-lg-0 opacity-75">
+            Created by <span class="text-white fw-bold">Mauricio</span>
           </footer>
         </aside>
 
         <!-- Centro -->
-        <div class="col-12 col-lg-8 p-3 p-lg-3 main-wrapper d-flex flex-column">
+        <div
+          class="col-12 col-lg-8 p-3 p-lg-4 main-wrapper d-flex flex-column position-relative"
+        >
           <main
-            class="bg-dark text-white p-4 rounded-5 h-lg-100 d-flex flex-column min-h-0"
+            class="main-content-panel text-white p-4 p-md-5 rounded-4 h-lg-100 d-flex flex-column min-h-0 position-relative shadow-2xl"
           >
             <!-- Título -->
-            <header class="d-flex align-items-center mb-4 flex-shrink-0">
-              <h2 class="display-4 me-4 fw-light">AUG 05</h2>
+            <header
+              class="d-flex align-items-center mb-4 flex-shrink-0 header-banner"
+            >
+              <h2
+                class="display-3 me-4 fw-black text-crimson date-display mb-0"
+              >
+                AUG 05
+              </h2>
               <hgroup>
-                <h3 class="h3 mb-0">Buenos días/Tardes/Noches</h3>
-                <p class="mb-0 h4 text-secondary">Tus tareas de hoy</p>
+                <h3 class="h4 mb-1 fw-bold">Buenos días/Tardes/Noches</h3>
+                <p id="currentListTitle" class="mb-0 h5 fw-medium">
+                  Tus tareas de hoy
+                </p>
               </hgroup>
             </header>
 
             <!-- Buscador -->
-            <div class="input-group mb-4 flex-shrink-0">
-              <input
-                type="text"
-                class="form-control rounded-pill-start bg-secondary text-white border-0 px-4"
-                placeholder="Buscar tarea..."
-              />
-              <button
-                class="btn btn-teal rounded-pill-end px-4 text-white fw-bold"
-                type="button"
-              >
-                Buscar
-              </button>
+            <div class="search-box-wrapper">
+              <div class="input-group">
+                <span
+                  class="input-group-text bg-transparent border-0 ps-3 pe-0"
+                >
+                  <i class="bi bi-search"></i>
+                </span>
+                <input
+                  type="text"
+                  id="searchInput"
+                  class="form-control text-white"
+                  placeholder="Buscar tareas en esta lista..."
+                />
+                <button class="btn btn-crimson" type="button" id="searchBtn">
+                  Buscar
+                </button>
+              </div>
             </div>
-
             <!-- Lista de tareas -->
             <section
-              class="task-list d-flex flex-column gap-3 overflow-y-auto p-2 flex-grow-1 min-h-0"
+              id="taskList"
+              class="task-list d-flex flex-column gap-3 overflow-y-auto p-1 flex-grow-1 min-h-0 custom-scrollbar"
+            ></section>
+
+            <!-- Botón flotante para agregar tarea -->
+            <button
+              class="btn btn-crimson text-white rounded-circle position-absolute btn-add-task shadow-crimson"
+              data-bs-toggle="modal"
+              data-bs-target="#newTaskModal"
+              title="Agregar Tarea"
             >
-              <!-- Tareas -->
-              <article class="task-card p-3 rounded-4 flex-shrink-0">
-                <div class="d-flex justify-content-between mb-2">
-                  <h3 class="task-title h5 fw-bold mb-0">
-                    Estudiar para el examen de JS
-                  </h3>
-                  <span class="task-status status-pending">Pendiente</span>
-                </div>
-                <p class="task-desc mb-3">
-                  Repasar los conceptos de manipulación del DOM, eventos e
-                  iteradores en JavaScript.
-                </p>
-                <div class="task-date d-flex align-items-center">
-                  <i class="bi bi-calendar-event me-2"></i>
-                  <span>Entrega: 08/08/2026</span>
-                </div>
-              </article>
-
-              <article class="task-card p-3 rounded-4 flex-shrink-0">
-                <div
-                  class="d-flex justify-content-between align-items-start mb-2"
-                >
-                  <h3 class="task-title h5 fw-bold mb-0">
-                    Entrega de Proyecto Individual 002
-                  </h3>
-                  <span class="task-status status-progress">En progreso</span>
-                </div>
-                <p class="task-desc mb-3">
-                  Completar la maquetación del tablero de tareas y subir los
-                  cambios a GitHub.
-                </p>
-                <div class="task-date d-flex align-items-center">
-                  <i class="bi bi-calendar-event me-2"></i>
-                  <span>Entrega: 10/08/2026</span>
-                </div>
-              </article>
-
-              <article class="task-card p-3 rounded-4 flex-shrink-0">
-                <div
-                  class="d-flex justify-content-between align-items-start mb-2"
-                >
-                  <h3 class="task-title h5 fw-bold mb-0">
-                    Reunión con el equipo de diseño
-                  </h3>
-                  <span class="task-status status-completed">Completada</span>
-                </div>
-                <p class="task-desc mb-3">
-                  Revisar los wireframes finales y coordinar las reglas de
-                  estilos globales.
-                </p>
-                <div class="task-date d-flex align-items-center">
-                  <i class="bi bi-calendar-event me-2"></i>
-                  <span>Entrega: 04/08/2026</span>
-                </div>
-              </article>
-
-              <article class="task-card p-3 rounded-4 flex-shrink-0">
-                <div
-                  class="d-flex justify-content-between align-items-start mb-2"
-                >
-                  <h3 class="task-title h5 fw-bold mb-0">
-                    Mantenimiento de la laptop
-                  </h3>
-                  <span class="task-status status-urgent">Urgente</span>
-                </div>
-                <p class="task-desc mb-3">
-                  Llevar el equipo al servicio técnico para limpieza de
-                  ventiladores y cambio de pasta térmica.
-                </p>
-                <div class="task-date d-flex align-items-center">
-                  <i class="bi bi-calendar-event me-2"></i>
-                  <span>Entrega: 12/08/2026</span>
-                </div>
-              </article>
-
-              <article class="task-card p-3 rounded-4 flex-shrink-0">
-                <div class="d-flex justify-content-between mb-2">
-                  <h3 class="task-title h5 fw-bold mb-0">
-                    Estudiar para el examen de JS
-                  </h3>
-                  <span class="task-status status-pending">Pendiente</span>
-                </div>
-                <p class="task-desc mb-3">
-                  Repasar los conceptos de manipulación del DOM, eventos e
-                  iteradores en JavaScript.
-                </p>
-                <div class="task-date d-flex align-items-center">
-                  <i class="bi bi-calendar-event me-2"></i>
-                  <span>Entrega: 08/08/2026</span>
-                </div>
-              </article>
-
-              <article class="task-card p-3 rounded-4 flex-shrink-0">
-                <div
-                  class="d-flex justify-content-between align-items-start mb-2"
-                >
-                  <h3 class="task-title h5 fw-bold mb-0">
-                    Entrega de Proyecto Individual 002
-                  </h3>
-                  <span class="task-status status-progress">En progreso</span>
-                </div>
-                <p class="task-desc mb-3">
-                  Completar la maquetación del tablero de tareas y subir los
-                  cambios a GitHub.
-                </p>
-                <div class="task-date d-flex align-items-center">
-                  <i class="bi bi-calendar-event me-2"></i>
-                  <span>Entrega: 10/08/2026</span>
-                </div>
-              </article>
-
-              <article class="task-card p-3 rounded-4 flex-shrink-0">
-                <div
-                  class="d-flex justify-content-between align-items-start mb-2"
-                >
-                  <h3 class="task-title h5 fw-bold mb-0">
-                    Reunión con el equipo de diseño
-                  </h3>
-                  <span class="task-status status-completed">Completada</span>
-                </div>
-                <p class="task-desc mb-3">
-                  Revisar los wireframes finales y coordinar las reglas de
-                  estilos globales.
-                </p>
-                <div class="task-date d-flex align-items-center">
-                  <i class="bi bi-calendar-event me-2"></i>
-                  <span>Entrega: 04/08/2026</span>
-                </div>
-              </article>
-            </section>
+              <i class="bi bi-plus-lg fs-2"></i>
+            </button>
           </main>
         </div>
 
-        <!-- Derecha -->
+        <!-- Derecha: Calendario -->
         <aside
-          class="col-12 col-lg-2 bg-secondary text-white p-4 d-flex align-items-end justify-content-center h-lg-100"
+          class="col-12 col-lg-2 p-4 d-flex flex-column justify-content-start align-items-center h-lg-100 sidebar-panel"
           aria-label="Right"
         >
-          <i class="bi bi-calendar-week display-1 text-dark py-4 py-lg-0"></i>
+          <div class="w-100 text-center">
+            <h3 class="h6 text-uppercase tracking-wider fw-bold mb-3">
+              Filtrar por Fecha
+            </h3>
+            <div class="calendar-input-wrapper mb-3">
+              <input
+                type="date"
+                id="calendarFilter"
+                class="form-control text-white text-center border-0 py-2"
+              />
+            </div>
+            <button
+              id="clearDateBtn"
+              class="btn btn-sm btn-outline-crimson w-100 fw-semibold"
+            >
+              Ver todas las fechas
+            </button>
+          </div>
         </aside>
       </div>
     </div>
+
+    <!-- Modales con Glassmorphism -->
+    <!-- Nueva Lista -->
+    <div class="modal fade" id="newListModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-white border-crimson">
+          <div class="modal-header">
+            <h4 class="modal-title fw-bold">Nueva Lista</h4>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <input
+              type="text"
+              id="newListInput"
+              class="form-control custom-input"
+              placeholder="Nombre de la lista"
+            />
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-crimson text-white fw-bold w-100"
+              id="saveListBtn"
+            >
+              Guardar Lista
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Editar Lista -->
+    <div class="modal fade" id="editListModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-white border-crimson">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold">Editar Lista</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="editListIdInput" />
+            <div class="mb-3">
+              <label for="editListInput" class="form-label small fw-bold"
+                >Nombre de la Lista</label
+              >
+              <input
+                type="text"
+                id="editListInput"
+                class="form-control custom-input"
+              />
+            </div>
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button
+              type="button"
+              class="btn btn-outline-danger fw-bold"
+              id="deleteListBtn"
+            >
+              <i class="bi bi-trash me-1"></i> Borrar
+            </button>
+            <button
+              type="button"
+              class="btn btn-crimson text-white fw-bold"
+              id="updateListBtn"
+            >
+              Guardar Cambios
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Nueva Tarea -->
+    <div class="modal fade" id="newTaskModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-white border-crimson">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold">Nueva Tarea</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div
+              id="formAlert"
+              class="alert alert-crimson-danger d-none mb-3 d-flex align-items-center gap-2"
+              role="alert"
+            >
+              <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+              <span id="formAlertMessage"
+                >Por favor, completa todos los campos requeridos.</span
+              >
+            </div>
+            <form id="taskForm">
+              <div class="mb-3">
+                <label for="newTaskNameInput" class="form-label small fw-bold"
+                  >Título</label
+                >
+                <input
+                  type="text"
+                  id="newTaskNameInput"
+                  class="form-control custom-input"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="newTaskDescInput" class="form-label small fw-bold"
+                  >Descripción</label
+                >
+                <textarea
+                  id="newTaskDescInput"
+                  class="form-control custom-input"
+                  rows="2"
+                ></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="newTaskDateInput" class="form-label small fw-bold"
+                  >Fecha de Entrega</label
+                >
+                <input
+                  type="date"
+                  id="newTaskDateInput"
+                  class="form-control custom-input"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="newTaskStatusInput" class="form-label small fw-bold"
+                  >Estado</label
+                >
+                <select
+                  id="newTaskStatusInput"
+                  class="form-select custom-input"
+                >
+                  <option value="">Selecciona un estado</option>
+                  <option value="pending">Pendiente</option>
+                  <option value="progress">En progreso</option>
+                  <option value="completed">Completada</option>
+                  <option value="urgent">Urgente</option>
+                </select>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-crimson text-white fw-bold w-100"
+              id="saveTaskBtn"
+            >
+              Guardar Tarea
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Ver / Editar / Eliminar Tarea -->
+    <div class="modal fade" id="editTaskModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-white border-crimson">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold">Detalles de la Tarea</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="editTaskForm">
+              <input type="hidden" id="editTaskId" />
+              <div class="mb-3">
+                <label for="editTaskTitleInput" class="form-label small fw-bold"
+                  >Título</label
+                >
+                <input
+                  type="text"
+                  id="editTaskTitleInput"
+                  class="form-control custom-input"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="editTaskDescInput" class="form-label small fw-bold"
+                  >Descripción</label
+                >
+                <textarea
+                  id="editTaskDescInput"
+                  class="form-control custom-input"
+                  rows="3"
+                ></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="editTaskListSelect" class="form-label small fw-bold"
+                  >Mover a Lista</label
+                >
+                <select
+                  id="editTaskListSelect"
+                  class="form-select custom-input"
+                ></select>
+              </div>
+              <div class="row">
+                <div class="col-6 mb-3">
+                  <label
+                    for="editTaskCreatedAtInput"
+                    class="form-label small fw-bold"
+                    >Creación</label
+                  >
+                  <input
+                    type="text"
+                    id="editTaskCreatedAtInput"
+                    class="form-control custom-input"
+                    disabled
+                  />
+                </div>
+                <div class="col-6 mb-3">
+                  <label
+                    for="editTaskDateInput"
+                    class="form-label small fw-bold"
+                    >Entrega</label
+                  >
+                  <input
+                    type="date"
+                    id="editTaskDateInput"
+                    class="form-control custom-input"
+                  />
+                </div>
+              </div>
+              <div class="mb-3">
+                <label
+                  for="editTaskStatusInput"
+                  class="form-label small fw-bold"
+                  >Estado</label
+                >
+                <select
+                  id="editTaskStatusInput"
+                  class="form-select custom-input"
+                >
+                  <option value=""></option>
+                  <option value="pending">Pendiente</option>
+                  <option value="progress">En progreso</option>
+                  <option value="completed">Completada</option>
+                  <option value="urgent">Urgente</option>
+                </select>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer d-flex justify-content-between">
+            <button
+              type="button"
+              class="btn btn-outline-danger fw-bold"
+              id="deleteTaskBtn"
+            >
+              <i class="bi bi-trash me-1"></i> Borrar
+            </button>
+            <button
+              type="button"
+              class="btn btn-crimson text-white fw-bold"
+              id="updateTaskBtn"
+            >
+              Guardar Cambios
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Librerías de JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="./js/app.js"></script>
   </body>
 </html>
