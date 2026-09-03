@@ -278,6 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const isCompleted = task.status === 'completed';
       article.className = `task-card p-3 p-md-4 rounded-4 flex-shrink-0 ${isCompleted ? 'completed' : ''}`;
       article.style.animationDelay = `${index * 0.06}s`;
+      article.dataset.taskId = task.id;
 
       const toggleIcon = isCompleted ? 'bi-check-circle-fill' : 'bi-circle';
       const toggleClass = isCompleted ? 'completed' : '';
@@ -293,6 +294,13 @@ document.addEventListener('DOMContentLoaded', () => {
               aria-label="${isCompleted ? 'Marcar como pendiente' : 'Marcar como completada'}"
             >
               <i class="bi ${toggleIcon}"></i>
+            </button>
+            <button
+              class="btn btn-sm btn-danger delete-button"
+              data-task-id="${task.id}"
+              aria-label="Eliminar tarea"
+            >
+              <i class="bi bi-trash"></i>
             </button>
           </div>
         </div>
@@ -312,6 +320,16 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         handleToggleComplete(task.id);
+      });
+
+      const deleteBtn = article.querySelector('.delete-button');
+      deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const parentTask = e.currentTarget.closest('[data-task-id]');
+        const taskId = Number(parentTask.dataset.taskId);
+        taskManager.deleteTask(taskId);
+        taskManager.save();
+        renderTasks();
       });
 
       article.addEventListener('click', () => openEditModal(task));

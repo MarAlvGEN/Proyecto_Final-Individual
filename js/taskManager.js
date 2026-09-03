@@ -102,6 +102,17 @@ class TaskManager {
     return false;
   }
 
+  deleteTask(taskId) {
+    const newTasks = [];
+    for (let task of this.tasks) {
+      if (task.id !== taskId) {
+        newTasks.push(task);
+      }
+    }
+    this.tasks = newTasks;
+    this.save();
+  }
+
   toggleComplete(id) {
     const task = this.getById(id);
     if (task) {
