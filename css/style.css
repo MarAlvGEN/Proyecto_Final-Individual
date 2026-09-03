@@ -486,6 +486,48 @@ select[data-status='urgent'] {
   box-shadow: 0 0 8px rgba(255, 0, 85, 0.5);
 }
 
+.task-card.completed {
+  opacity: 0.5;
+  border-color: var(--status-completed-border);
+}
+.task-card.completed .task-title {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+.task-card.completed .task-desc {
+  color: var(--text-muted);
+}
+.task-card.completed .task-status {
+  background: var(--status-completed-bg);
+  color: var(--status-completed);
+  border-color: var(--status-completed-border);
+}
+.task-card.completed::before {
+  background: var(--status-completed);
+}
+
+.btn-toggle-complete {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+.btn-toggle-complete:hover {
+  color: var(--status-completed);
+  transform: scale(1.1);
+}
+.btn-toggle-complete.completed {
+  color: var(--status-completed);
+}
+.btn-toggle-complete i {
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+}
+
 @media (min-width: 992px) {
   body {
     height: 100vh;

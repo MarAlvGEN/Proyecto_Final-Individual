@@ -1,31 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-  let lists = JSON.parse(localStorage.getItem('todo_lists')) || [
-    { id: 1, name: 'Inbox' },
-    { id: 2, name: 'Compras' },
-  ];
+  const taskManager = new TaskManager();
+  const listManager = new ListManager();
 
-  let tasks = JSON.parse(localStorage.getItem('todo_tasks')) || [
-    {
-      id: 1,
-      listId: 1,
-      title: 'Estudiar para el examen de JS',
-      desc: 'Repasar los conceptos de manipulación del DOM, eventos e iteradores en JavaScript.',
-      createdAt: '2026-08-01',
-      date: '2026-08-08',
-      status: 'pending',
-    },
-    {
-      id: 2,
-      listId: 1,
-      title: 'Entrega de Proyecto Individual 002',
-      desc: 'Completar la maquetación del tablero de tareas y subir los cambios a GitHub.',
-      createdAt: '2026-08-02',
-      date: '2026-08-10',
-      status: 'urgent',
-    },
-  ];
+  console.log(taskManager.tasks);
 
-  let currentListId = lists[0]?.id || 1;
+  let currentListId = listManager.getFirst()?.id || 1;
   let activeDateFilter = '';
   let activeSearchQuery = '';
 
@@ -45,9 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const editTaskTitleInput = document.getElementById('editTaskTitleInput');
   const editTaskDescInput = document.getElementById('editTaskDescInput');
   const editTaskListSelect = document.getElementById('editTaskListSelect');
-  const editTaskCreatedAtInput = document.getElementById(
-    'editTaskCreatedAtInput',
-  );
+  const editTaskCreatedAtInput = document.getElementById('editTaskCreatedAtInput');
   const editTaskDateInput = document.getElementById('editTaskDateInput');
   const editTaskStatusInput = document.getElementById('editTaskStatusInput');
   const newTaskStatusInput = document.getElementById('newTaskStatusInput');
@@ -55,16 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const deleteTaskBtn = document.getElementById('deleteTaskBtn');
 
   const statusMap = {
+    PORHACER: { label: 'Pendiente', class: 'status-pending' },
     pending: { label: 'Pendiente', class: 'status-pending' },
     progress: { label: 'En progreso', class: 'status-progress' },
     completed: { label: 'Completada', class: 'status-completed' },
     urgent: { label: 'Urgente', class: 'status-urgent' },
   };
-
-  function saveData() {
-    localStorage.setItem('todo_lists', JSON.stringify(lists));
-    localStorage.setItem('todo_tasks', JSON.stringify(tasks));
-  }
 
   function updateSelectStatusColor(selectElement) {
     if (selectElement) {
@@ -75,9 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
   [newTaskStatusInput, editTaskStatusInput].forEach((select) => {
     if (select) {
       updateSelectStatusColor(select);
-      select.addEventListener('change', (e) =>
-        updateSelectStatusColor(e.target),
-      );
+      select.addEventListener('change', (e) => updateSelectStatusColor(e.target));
     }
   });
 
@@ -99,9 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (headerDate) {
       const today = new Date();
       const options = { month: 'short', day: '2-digit' };
-      headerDate.textContent = today
-        .toLocaleDateString('en-US', options)
-        .toUpperCase();
+      headerDate.textContent = today.toLocaleDateString('en-US', options).toUpperCase();
     }
   }
 
@@ -133,46 +102,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (!data.title || data.title.trim() === '') {
-      document
-        .getElementById('newTaskNameInput')
-        ?.classList.add('border-danger', 'is-invalid');
-      return {
-        isValid: false,
-        message: 'El campo "Título" no puede estar vacío.',
-      };
+      document.getElementById('newTaskNameInput')?.classList.add('border-danger', 'is-invalid');
+      return { isValid: false, message: 'El campo "Título" no puede estar vacío.' };
     }
     if (!data.desc || data.desc.trim() === '') {
-      document
-        .getElementById('newTaskDescInput')
-        ?.classList.add('border-danger', 'is-invalid');
-      return {
-        isValid: false,
-        message: 'El campo "Descripción" no puede estar vacío.',
-      };
+      document.getElementById('newTaskDescInput')?.classList.add('border-danger', 'is-invalid');
+      return { isValid: false, message: 'El campo "Descripción" no puede estar vacío.' };
     }
     if (!data.date || data.date.trim() === '') {
-      document
-        .getElementById('newTaskDateInput')
-        ?.classList.add('border-danger', 'is-invalid');
-      return {
-        isValid: false,
-        message: 'Debes seleccionar una fecha de entrega.',
-      };
+      document.getElementById('newTaskDateInput')?.classList.add('border-danger', 'is-invalid');
+      return { isValid: false, message: 'Debes seleccionar una fecha de entrega.' };
     }
     if (!data.status || data.status.trim() === '') {
-      document
-        .getElementById('newTaskStatusInput')
-        ?.classList.add('border-danger', 'is-invalid');
-      return {
-        isValid: false,
-        message: 'Debes seleccionar un estado para la tarea.',
-      };
+      document.getElementById('newTaskStatusInput')?.classList.add('border-danger', 'is-invalid');
+      return { isValid: false, message: 'Debes seleccionar un estado para la tarea.' };
     }
     return { isValid: true, message: '' };
   }
 
   function renderLists() {
     listsContainer.innerHTML = '';
+    const lists = listManager.getAll();
     lists.forEach((list) => {
       const listWrapper = document.createElement('div');
       listWrapper.className = 'd-flex align-items-center gap-1 mb-1';
@@ -184,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.textContent = list.name;
       btn.addEventListener('click', () => {
         currentListId = list.id;
-        const activeList = lists.find((l) => l.id === currentListId);
+        const activeList = listManager.getById(currentListId);
         currentListTitle.textContent = activeList ? activeList.name : '';
         renderLists();
         renderTasks();
@@ -219,18 +169,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const newName = document.getElementById('editListInput').value.trim();
 
     if (newName) {
-      const listIndex = lists.findIndex((l) => l.id === listId);
-      if (listIndex !== -1) {
-        lists[listIndex].name = newName;
-        if (currentListId === listId) {
-          currentListTitle.textContent = newName;
-        }
+      listManager.update(listId, newName);
+      if (currentListId === listId) {
+        currentListTitle.textContent = newName;
       }
-
-      saveData();
-      const modalInstance = bootstrap.Modal.getInstance(
-        document.getElementById('editListModal'),
-      );
+      const modalInstance = bootstrap.Modal.getInstance(document.getElementById('editListModal'));
       if (modalInstance) modalInstance.hide();
       renderLists();
       Toast.fire({ icon: 'success', title: 'Lista actualizada' });
@@ -240,20 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('deleteListBtn').addEventListener('click', () => {
     const listId = Number(document.getElementById('editListIdInput').value);
 
-    if (lists.length <= 1) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Acción no permitida',
-        text: 'Debes mantener al menos una lista activa.',
-        background: '#120d18',
-        color: '#fff',
-      });
-      return;
-    }
-
-    const modalInstance = bootstrap.Modal.getInstance(
-      document.getElementById('editListModal'),
-    );
+    const modalInstance = bootstrap.Modal.getInstance(document.getElementById('editListModal'));
     if (modalInstance) modalInstance.hide();
 
     Swal.fire({
@@ -269,15 +199,26 @@ document.addEventListener('DOMContentLoaded', () => {
       color: '#fff',
     }).then((result) => {
       if (result.isConfirmed) {
-        lists = lists.filter((l) => l.id !== listId);
-        tasks = tasks.filter((t) => t.listId !== listId);
+        const deleteResult = listManager.delete(listId);
+        if (!deleteResult.success) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Acción no permitida',
+            text: deleteResult.reason,
+            background: '#120d18',
+            color: '#fff',
+          });
+          return;
+        }
+        taskManager.tasks = taskManager.tasks.filter((t) => t.listId !== listId);
+        taskManager.save();
 
         if (currentListId === listId) {
-          currentListId = lists[0].id;
-          currentListTitle.textContent = lists[0].name;
+          const firstList = listManager.getFirst();
+          currentListId = firstList.id;
+          currentListTitle.textContent = firstList.name;
         }
 
-        saveData();
         renderLists();
         renderTasks();
         Toast.fire({ icon: 'success', title: 'Lista eliminada' });
@@ -296,6 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateSelectStatusColor(editTaskStatusInput);
 
     editTaskListSelect.innerHTML = '';
+    const lists = listManager.getAll();
     lists.forEach((l) => {
       const option = document.createElement('option');
       option.value = l.id;
@@ -309,21 +251,17 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.show();
   }
 
+  function handleToggleComplete(taskId) {
+    const updatedTask = taskManager.toggleComplete(taskId);
+    if (updatedTask) {
+      renderTasks();
+    }
+  }
+
   function renderTasks() {
     taskList.innerHTML = '';
 
-    const filteredTasks = tasks.filter((task) => {
-      const matchesList = task.listId === currentListId;
-      const matchesDate = activeDateFilter
-        ? task.date === activeDateFilter
-        : true;
-      const matchesSearch = activeSearchQuery
-        ? task.title.toLowerCase().includes(activeSearchQuery) ||
-          task.desc.toLowerCase().includes(activeSearchQuery)
-        : true;
-
-      return matchesList && matchesDate && matchesSearch;
-    });
+    const filteredTasks = taskManager.getFiltered(currentListId, activeDateFilter, activeSearchQuery);
 
     if (filteredTasks.length === 0) {
       taskList.innerHTML = `
@@ -337,13 +275,26 @@ document.addEventListener('DOMContentLoaded', () => {
     filteredTasks.forEach((task, index) => {
       const statusInfo = statusMap[task.status] || statusMap['pending'];
       const article = document.createElement('article');
-      article.className = 'task-card p-3 p-md-4 rounded-4 flex-shrink-0';
+      const isCompleted = task.status === 'completed';
+      article.className = `task-card p-3 p-md-4 rounded-4 flex-shrink-0 ${isCompleted ? 'completed' : ''}`;
       article.style.animationDelay = `${index * 0.06}s`;
+
+      const toggleIcon = isCompleted ? 'bi-check-circle-fill' : 'bi-circle';
+      const toggleClass = isCompleted ? 'completed' : '';
 
       article.innerHTML = `
         <div class="d-flex justify-content-between align-items-start mb-2">
           <h3 class="task-title h5 fw-bold mb-0">${task.title}</h3>
-          <span class="task-status ${statusInfo.class}">${statusInfo.label}</span>
+          <div class="d-flex align-items-center gap-2">
+            <span class="task-status ${statusInfo.class}">${statusInfo.label}</span>
+            <button
+              class="btn btn-sm btn-toggle-complete ${toggleClass}"
+              data-task-id="${task.id}"
+              aria-label="${isCompleted ? 'Marcar como pendiente' : 'Marcar como completada'}"
+            >
+              <i class="bi ${toggleIcon}"></i>
+            </button>
+          </div>
         </div>
         <p class="task-desc mb-3">${task.desc}</p>
         <div
@@ -357,6 +308,12 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       `;
 
+      const toggleBtn = article.querySelector('.btn-toggle-complete');
+      toggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        handleToggleComplete(task.id);
+      });
+
       article.addEventListener('click', () => openEditModal(task));
       taskList.appendChild(article);
     });
@@ -365,20 +322,20 @@ document.addEventListener('DOMContentLoaded', () => {
   saveListBtn.addEventListener('click', () => {
     const name = newListInput.value.trim();
     if (name) {
-      const newList = { id: Date.now(), name: name };
-      lists.push(newList);
+      listManager.create(name);
       newListInput.value = '';
-      saveData();
-      const modalInstance = bootstrap.Modal.getInstance(
-        document.getElementById('newListModal'),
-      );
+      const modalInstance = bootstrap.Modal.getInstance(document.getElementById('newListModal'));
       if (modalInstance) modalInstance.hide();
       renderLists();
       Toast.fire({ icon: 'success', title: 'Lista creada' });
     }
   });
 
-  saveTaskBtn.addEventListener('click', () => {
+  const newTaskForm = document.getElementById('newTaskForm');
+
+  newTaskForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
     const formData = {
       title: document.querySelector('#newTaskNameInput').value,
       desc: document.querySelector('#newTaskDescInput').value,
@@ -390,30 +347,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const formAlert = document.getElementById('formAlert');
 
     if (!validation.isValid) {
-      document.getElementById('formAlertMessage').textContent =
-        validation.message;
+      document.getElementById('formAlertMessage').textContent = validation.message;
       formAlert.classList.remove('d-none');
     } else {
       formAlert.classList.add('d-none');
 
-      const newTask = {
-        id: Date.now(),
-        listId: currentListId,
-        title: formData.title.trim(),
-        desc: formData.desc.trim(),
-        createdAt: getTodayString(),
-        date: formData.date,
-        status: formData.status,
-      };
-
-      tasks.push(newTask);
-      saveData();
-      document.getElementById('taskForm').reset();
+      taskManager.addTask(
+        formData.title.trim(),
+        formData.desc.trim(),
+        formData.date,
+        formData.status
+      );
+      newTaskForm.reset();
       updateSelectStatusColor(newTaskStatusInput);
 
-      const modalInstance = bootstrap.Modal.getInstance(
-        document.getElementById('newTaskModal'),
-      );
+      const modalInstance = bootstrap.Modal.getInstance(document.getElementById('newTaskModal'));
       if (modalInstance) modalInstance.hide();
       renderTasks();
       Toast.fire({ icon: 'success', title: 'Tarea agregada' });
@@ -427,6 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
       desc: editTaskDescInput.value.trim(),
       date: editTaskDateInput.value,
       status: editTaskStatusInput.value,
+      listId: editTaskListSelect.value,
     };
 
     const validation = validFormFieldInput(formData);
@@ -441,22 +390,9 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const taskIndex = tasks.findIndex((t) => t.id === id);
-    if (taskIndex !== -1) {
-      tasks[taskIndex] = {
-        ...tasks[taskIndex],
-        listId: Number(editTaskListSelect.value),
-        title: formData.title,
-        desc: formData.desc,
-        date: formData.date,
-        status: formData.status,
-      };
-      saveData();
-    }
+    taskManager.update(id, formData);
 
-    const modalInstance = bootstrap.Modal.getInstance(
-      document.getElementById('editTaskModal'),
-    );
+    const modalInstance = bootstrap.Modal.getInstance(document.getElementById('editTaskModal'));
     if (modalInstance) modalInstance.hide();
     renderTasks();
     Toast.fire({ icon: 'success', title: 'Tarea actualizada' });
@@ -465,9 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
   deleteTaskBtn.addEventListener('click', () => {
     const id = Number(editTaskId.value);
 
-    const modalInstance = bootstrap.Modal.getInstance(
-      document.getElementById('editTaskModal'),
-    );
+    const modalInstance = bootstrap.Modal.getInstance(document.getElementById('editTaskModal'));
     if (modalInstance) modalInstance.hide();
 
     Swal.fire({
@@ -483,8 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
       color: '#fff',
     }).then((result) => {
       if (result.isConfirmed) {
-        tasks = tasks.filter((t) => t.id !== id);
-        saveData();
+        taskManager.delete(id);
         renderTasks();
         Toast.fire({ icon: 'success', title: 'Tarea borrada' });
       }
