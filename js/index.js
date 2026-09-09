@@ -46,6 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  document.getElementById('newTaskDateInput').value = getTodayString();
+
   const Toast = Swal.mixin({
     toast: true,
     position: 'bottom-end',
@@ -389,30 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   taskList.addEventListener('click', (event) => {
-    const target = event.target;
-
-    if (target.classList.contains('done-button')) {
-      const parentTask = target.closest('[data-task-id]');
-      const taskId = Number(parentTask.dataset.taskId);
-      const task = taskManager.getTaskById(taskId);
-      if (task) {
-        task.status = task.status === 'DONE' ? 'PORHACER' : 'DONE';
-        taskManager.save();
-        taskManager.render(renderTasks);
-      }
-      return;
-    }
-
-    const deleteBtn = target.closest('.delete-button');
-    if (deleteBtn) {
-      const parentTask = deleteBtn.closest('[data-task-id]');
-      const taskId = Number(parentTask.dataset.taskId);
-      taskManager.deleteTask(taskId);
-      renderTasks();
-      return;
-    }
-
-    const taskCard = target.closest('.task-card');
+    const taskCard = event.target.closest('.task-card');
     if (taskCard) {
       const taskId = Number(taskCard.dataset.taskId);
       const task = taskManager.getTaskById(taskId);
