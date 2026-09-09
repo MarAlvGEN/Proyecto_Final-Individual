@@ -31,14 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const updateTaskBtn = document.getElementById('updateTaskBtn');
   const deleteTaskBtn = document.getElementById('deleteTaskBtn');
 
-  const statusMap = {
-    PORHACER: { label: 'Pendiente', class: 'status-pending' },
-    pending: { label: 'Pendiente', class: 'status-pending' },
-    progress: { label: 'En progreso', class: 'status-progress' },
-    completed: { label: 'Completada', class: 'status-completed' },
-    urgent: { label: 'Urgente', class: 'status-urgent' },
-  };
-
   function updateSelectStatusColor(selectElement) {
     if (selectElement) {
       selectElement.setAttribute('data-status', selectElement.value);
@@ -251,16 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.show();
   }
 
-  function handleToggleComplete(taskId) {
-    const updatedTask = taskManager.toggleComplete(taskId);
-    if (updatedTask) {
-      renderTasks();
-    }
-  }
-
   function renderTasks() {
-    taskList.innerHTML = '';
-
     const filteredTasks = taskManager.getFiltered(currentListId, activeDateFilter, activeSearchQuery);
 
     if (filteredTasks.length === 0) {
@@ -272,69 +255,9 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    filteredTasks.forEach((task, index) => {
-      const statusInfo = statusMap[task.status] || statusMap['pending'];
-      const article = document.createElement('article');
-      const isCompleted = task.status === 'completed';
-      article.className = `task-card p-3 p-md-4 rounded-4 flex-shrink-0 ${isCompleted ? 'completed' : ''}`;
-      article.style.animationDelay = `${index * 0.06}s`;
-      article.dataset.taskId = task.id;
-
-      const toggleIcon = isCompleted ? 'bi-check-circle-fill' : 'bi-circle';
-      const toggleClass = isCompleted ? 'completed' : '';
-
-      article.innerHTML = `
-        <div class="d-flex justify-content-between align-items-start mb-2">
-          <h3 class="task-title h5 fw-bold mb-0">${task.title}</h3>
-          <div class="d-flex align-items-center gap-2">
-            <span class="task-status ${statusInfo.class}">${statusInfo.label}</span>
-            <button
-              class="btn btn-sm btn-toggle-complete ${toggleClass}"
-              data-task-id="${task.id}"
-              aria-label="${isCompleted ? 'Marcar como pendiente' : 'Marcar como completada'}"
-            >
-              <i class="bi ${toggleIcon}"></i>
-            </button>
-            <button
-              class="btn btn-sm btn-danger delete-button"
-              data-task-id="${task.id}"
-              aria-label="Eliminar tarea"
-            >
-              <i class="bi bi-trash"></i>
-            </button>
-          </div>
-        </div>
-        <p class="task-desc mb-3">${task.desc}</p>
-        <div
-          class="task-date d-flex align-items-center justify-content-between pt-2 border-top border-secondary border-opacity-10"
-        >
-          <div class="small">
-            <i class="bi bi-calendar-event me-1 text-crimson"></i>
-            <span>Entrega: ${formatDate(task.date)}</span>
-          </div>
-          <span class="small opacity-75">Creada: ${formatDate(task.createdAt)}</span>
-        </div>
-      `;
-
-      const toggleBtn = article.querySelector('.btn-toggle-complete');
-      toggleBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        handleToggleComplete(task.id);
-      });
-
-      const deleteBtn = article.querySelector('.delete-button');
-      deleteBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const parentTask = e.currentTarget.closest('[data-task-id]');
-        const taskId = Number(parentTask.dataset.taskId);
-        taskManager.deleteTask(taskId);
-        taskManager.save();
-        renderTasks();
-      });
-
-      article.addEventListener('click', () => openEditModal(task));
-      taskList.appendChild(article);
-    });
+    taskList.innerHTML = filteredTasks.map((task) =>
+      taskManager.createTaskHtml(task.id, task.title, task.desc, task.date, task.status)
+    ).join('');
   }
 
   saveListBtn.addEventListener('click', () => {
@@ -461,6 +384,38 @@ document.addEventListener('DOMContentLoaded', () => {
   searchInput.addEventListener('keyup', (e) => {
     activeSearchQuery = e.target.value.trim().toLowerCase();
     renderTasks();
+  });
+
+  taskList.addEventListener('click', (event) => {
+    const target = event.target;
+
+    if (target.classList.contains('done-button')) {
+      const parentTask = target.closest('[data-task-id]');
+      const taskId = Number(parentTask.dataset.taskId);
+      const task = taskManager.getTaskById(taskId);
+      if (task) {
+        task.status = task.status === 'DONE' ? 'PORHACER' : 'DONE';
+        taskManager.save();
+        taskManager.render(renderTasks);
+      }
+      return;
+    }
+
+    const deleteBtn = target.closest('.delete-button');
+    if (deleteBtn) {
+      const parentTask = deleteBtn.closest('[data-task-id]');
+      const taskId = Number(parentTask.dataset.taskId);
+      taskManager.deleteTask(taskId);
+      renderTasks();
+      return;
+    }
+
+    const taskCard = target.closest('.task-card');
+    if (taskCard) {
+      const taskId = Number(taskCard.dataset.taskId);
+      const task = taskManager.getTaskById(taskId);
+      if (task) openEditModal(task);
+    }
   });
 
   setDynamicHeaderDate();
