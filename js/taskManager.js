@@ -2,25 +2,24 @@ class TaskManager {
   constructor(currentId = 0) {
     this.tasks = [];
     this.currentId = currentId;
-    this.loadFromStorage();
   }
 
-  loadFromStorage() {
-    const stored = localStorage.getItem('todo_tasks');
-    if (stored) {
-      try {
-        this.tasks = JSON.parse(stored);
-        const maxId = this.tasks.reduce((max, task) => Math.max(max, task.id), 0);
-        this.currentId = Math.max(this.currentId, maxId);
-      } catch (e) {
-        this.tasks = [];
-        this.currentId = 0;
-      }
+  load() {
+    const tasksJson = localStorage.getItem('tasks');
+    if (tasksJson) {
+      this.tasks = JSON.parse(tasksJson);
+    }
+    const currentId = localStorage.getItem('currentId');
+    if (currentId) {
+      this.currentId = Number(currentId);
     }
   }
 
   save() {
-    localStorage.setItem('todo_tasks', JSON.stringify(this.tasks));
+    const tasksJson = JSON.stringify(this.tasks);
+    localStorage.setItem('tasks', tasksJson);
+    const currentId = String(this.currentId);
+    localStorage.setItem('currentId', currentId);
   }
 
   getAll() {

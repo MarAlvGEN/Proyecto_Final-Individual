@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const taskManager = new TaskManager();
   const listManager = new ListManager();
 
+  taskManager.load();
+
   console.log(taskManager.tasks);
 
   let currentListId = listManager.getFirst()?.id || 1;
@@ -420,5 +422,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setDynamicHeaderDate();
   renderLists();
-  renderTasks();
+  taskManager.render(renderTasks);
 });
