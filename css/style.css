@@ -382,20 +382,20 @@ select.custom-input option {
   color: var(--text-primary);
 }
 
-select.custom-input option[value='pending'] {
+select.custom-input option[value='PORHACER'] {
   color: var(--status-pending);
 }
 select.custom-input option[value='progress'] {
   color: var(--status-progress);
 }
-select.custom-input option[value='completed'] {
+select.custom-input option[value='DONE'] {
   color: var(--status-completed);
 }
 select.custom-input option[value='urgent'] {
   color: var(--status-urgent);
 }
 
-select[data-status='pending'] {
+select[data-status='PORHACER'] {
   border-color: var(--status-pending-border);
   color: var(--status-pending);
   box-shadow: 0 0 10px rgba(255, 170, 0, 0.2);
@@ -405,7 +405,7 @@ select[data-status='progress'] {
   color: var(--status-progress);
   box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
 }
-select[data-status='completed'] {
+select[data-status='DONE'] {
   border-color: var(--status-completed-border);
   color: var(--status-completed);
   box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
