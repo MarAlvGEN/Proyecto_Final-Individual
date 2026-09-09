@@ -528,6 +528,15 @@ select[data-status='urgent'] {
   transition: all 0.2s ease;
 }
 
+.done-button {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  transition: all 0.2s ease;
+}
+.done-button:hover {
+  transform: scale(1.05);
+}
+
 @media (min-width: 992px) {
   body {
     height: 100vh;
