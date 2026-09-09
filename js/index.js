@@ -26,7 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const editTaskTitleInput = document.getElementById('editTaskTitleInput');
   const editTaskDescInput = document.getElementById('editTaskDescInput');
   const editTaskListSelect = document.getElementById('editTaskListSelect');
-  const editTaskCreatedAtInput = document.getElementById('editTaskCreatedAtInput');
+  const editTaskCreatedAtInput = document.getElementById(
+    'editTaskCreatedAtInput',
+  );
   const editTaskDateInput = document.getElementById('editTaskDateInput');
   const editTaskStatusInput = document.getElementById('editTaskStatusInput');
   const newTaskStatusInput = document.getElementById('newTaskStatusInput');
@@ -42,7 +44,9 @@ document.addEventListener('DOMContentLoaded', () => {
   [newTaskStatusInput, editTaskStatusInput].forEach((select) => {
     if (select) {
       updateSelectStatusColor(select);
-      select.addEventListener('change', (e) => updateSelectStatusColor(e.target));
+      select.addEventListener('change', (e) =>
+        updateSelectStatusColor(e.target),
+      );
     }
   });
 
@@ -66,7 +70,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (headerDate) {
       const today = new Date();
       const options = { month: 'short', day: '2-digit' };
-      headerDate.textContent = today.toLocaleDateString('en-US', options).toUpperCase();
+      headerDate.textContent = today
+        .toLocaleDateString('en-US', options)
+        .toUpperCase();
     }
   }
 
@@ -98,20 +104,40 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (!data.title || data.title.trim() === '') {
-      document.getElementById('newTaskNameInput')?.classList.add('border-danger', 'is-invalid');
-      return { isValid: false, message: 'El campo "Título" no puede estar vacío.' };
+      document
+        .getElementById('newTaskNameInput')
+        ?.classList.add('border-danger', 'is-invalid');
+      return {
+        isValid: false,
+        message: 'El campo "Título" no puede estar vacío.',
+      };
     }
     if (!data.desc || data.desc.trim() === '') {
-      document.getElementById('newTaskDescInput')?.classList.add('border-danger', 'is-invalid');
-      return { isValid: false, message: 'El campo "Descripción" no puede estar vacío.' };
+      document
+        .getElementById('newTaskDescInput')
+        ?.classList.add('border-danger', 'is-invalid');
+      return {
+        isValid: false,
+        message: 'El campo "Descripción" no puede estar vacío.',
+      };
     }
     if (!data.date || data.date.trim() === '') {
-      document.getElementById('newTaskDateInput')?.classList.add('border-danger', 'is-invalid');
-      return { isValid: false, message: 'Debes seleccionar una fecha de entrega.' };
+      document
+        .getElementById('newTaskDateInput')
+        ?.classList.add('border-danger', 'is-invalid');
+      return {
+        isValid: false,
+        message: 'Debes seleccionar una fecha de entrega.',
+      };
     }
     if (!data.status || data.status.trim() === '') {
-      document.getElementById('newTaskStatusInput')?.classList.add('border-danger', 'is-invalid');
-      return { isValid: false, message: 'Debes seleccionar un estado para la tarea.' };
+      document
+        .getElementById('newTaskStatusInput')
+        ?.classList.add('border-danger', 'is-invalid');
+      return {
+        isValid: false,
+        message: 'Debes seleccionar un estado para la tarea.',
+      };
     }
     return { isValid: true, message: '' };
   }
@@ -125,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const btn = document.createElement('button');
       btn.className = `btn btn-list py-2 px-3 flex-grow-1 text-truncate fw-semibold ${
-        list.id === currentListId ? 'active' : 'text-muted'
+        list.id === currentListId ? 'active' : ''
       }`;
       btn.textContent = list.name;
       btn.addEventListener('click', () => {
@@ -169,7 +195,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (currentListId === listId) {
         currentListTitle.textContent = newName;
       }
-      const modalInstance = bootstrap.Modal.getInstance(document.getElementById('editListModal'));
+      const modalInstance = bootstrap.Modal.getInstance(
+        document.getElementById('editListModal'),
+      );
       if (modalInstance) modalInstance.hide();
       renderLists();
       Toast.fire({ icon: 'success', title: 'Lista actualizada' });
@@ -179,7 +207,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('deleteListBtn').addEventListener('click', () => {
     const listId = Number(document.getElementById('editListIdInput').value);
 
-    const modalInstance = bootstrap.Modal.getInstance(document.getElementById('editListModal'));
+    const modalInstance = bootstrap.Modal.getInstance(
+      document.getElementById('editListModal'),
+    );
     if (modalInstance) modalInstance.hide();
 
     Swal.fire({
@@ -206,7 +236,9 @@ document.addEventListener('DOMContentLoaded', () => {
           });
           return;
         }
-        taskManager.tasks = taskManager.tasks.filter((t) => t.listId !== listId);
+        taskManager.tasks = taskManager.tasks.filter(
+          (t) => t.listId !== listId,
+        );
         taskManager.save();
 
         if (currentListId === listId) {
@@ -248,7 +280,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderTasks() {
-    const filteredTasks = taskManager.getFiltered(currentListId, activeDateFilter, activeSearchQuery);
+    const filteredTasks = taskManager.getFiltered(
+      currentListId,
+      activeDateFilter,
+      activeSearchQuery,
+    );
 
     if (filteredTasks.length === 0) {
       taskList.innerHTML = `
@@ -259,9 +295,17 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    taskList.innerHTML = filteredTasks.map((task) =>
-      taskManager.createTaskHtml(task.id, task.title, task.desc, task.date, task.status)
-    ).join('');
+    taskList.innerHTML = filteredTasks
+      .map((task) =>
+        taskManager.createTaskHtml(
+          task.id,
+          task.title,
+          task.desc,
+          task.date,
+          task.status,
+        ),
+      )
+      .join('');
   }
 
   saveListBtn.addEventListener('click', () => {
@@ -269,7 +313,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (name) {
       listManager.create(name);
       newListInput.value = '';
-      const modalInstance = bootstrap.Modal.getInstance(document.getElementById('newListModal'));
+      const modalInstance = bootstrap.Modal.getInstance(
+        document.getElementById('newListModal'),
+      );
       if (modalInstance) modalInstance.hide();
       renderLists();
       Toast.fire({ icon: 'success', title: 'Lista creada' });
@@ -292,7 +338,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const formAlert = document.getElementById('formAlert');
 
     if (!validation.isValid) {
-      document.getElementById('formAlertMessage').textContent = validation.message;
+      document.getElementById('formAlertMessage').textContent =
+        validation.message;
       formAlert.classList.remove('d-none');
     } else {
       formAlert.classList.add('d-none');
@@ -301,12 +348,14 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.title.trim(),
         formData.desc.trim(),
         formData.date,
-        formData.status
+        formData.status,
       );
       newTaskForm.reset();
       updateSelectStatusColor(newTaskStatusInput);
 
-      const modalInstance = bootstrap.Modal.getInstance(document.getElementById('newTaskModal'));
+      const modalInstance = bootstrap.Modal.getInstance(
+        document.getElementById('newTaskModal'),
+      );
       if (modalInstance) modalInstance.hide();
       renderTasks();
       Toast.fire({ icon: 'success', title: 'Tarea agregada' });
@@ -337,7 +386,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     taskManager.update(id, formData);
 
-    const modalInstance = bootstrap.Modal.getInstance(document.getElementById('editTaskModal'));
+    const modalInstance = bootstrap.Modal.getInstance(
+      document.getElementById('editTaskModal'),
+    );
     if (modalInstance) modalInstance.hide();
     renderTasks();
     Toast.fire({ icon: 'success', title: 'Tarea actualizada' });
@@ -346,7 +397,9 @@ document.addEventListener('DOMContentLoaded', () => {
   deleteTaskBtn.addEventListener('click', () => {
     const id = Number(editTaskId.value);
 
-    const modalInstance = bootstrap.Modal.getInstance(document.getElementById('editTaskModal'));
+    const modalInstance = bootstrap.Modal.getInstance(
+      document.getElementById('editTaskModal'),
+    );
     if (modalInstance) modalInstance.hide();
 
     Swal.fire({
