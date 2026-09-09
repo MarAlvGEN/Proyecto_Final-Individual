@@ -71,12 +71,6 @@ class TaskManager {
           <h3 class="task-title h5 fw-bold mb-0">${name}</h3>
           <div class="d-flex align-items-center gap-2">
             <span class="task-status ${statusInfo.class}">${statusInfo.label}</span>
-            <button class="done-button btn btn-success btn-sm" data-task-id="${id}">
-              Mark As Done
-            </button>
-            <button class="btn btn-sm btn-danger delete-button" data-task-id="${id}" aria-label="Eliminar tarea">
-              <i class="bi bi-trash"></i>
-            </button>
           </div>
         </div>
         <p class="task-desc mb-3">${description}</p>
