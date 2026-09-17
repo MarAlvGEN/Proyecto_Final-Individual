@@ -246,6 +246,7 @@ main.main-content-panel {
 }
 
 .task-card {
+  cursor: pointer;
   background: var(--bg-card);
   border: 1px solid var(--border-card);
   backdrop-filter: blur(10px);
@@ -1329,6 +1330,7 @@ select[data-status='urgent'] {
 
 @media (max-width: 1500px) {
   .header-layout {
+    justify-content: center;
     flex-wrap: wrap;
   }
 
@@ -1338,6 +1340,30 @@ select[data-status='urgent'] {
     gap: 0.5rem;
     width: fit-content;
   }
+}
+
+/* Footer slide underline */
+footer a {
+  text-decoration: none;
+  position: relative;
+  display: inline-block;
+}
+
+footer a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--color-crimson);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.1s ease;
+}
+
+footer a:hover::after {
+  transform: scaleX(1);
 }
 
 @media (max-width: 1120px) {
