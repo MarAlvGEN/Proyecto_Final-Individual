@@ -138,6 +138,14 @@ document.addEventListener('DOMContentLoaded', () => {
     .getElementById('newTaskDateInput')
     .addEventListener('input', updateLivePreview);
 
+  const formAlert = document.getElementById('formAlert');
+  ['newTaskNameInput', 'newTaskDescInput', 'newTaskDateInput'].forEach((id) => {
+    document.getElementById(id)?.addEventListener('input', (e) => {
+      formAlert?.classList.add('d-none');
+      e.target.classList.remove('border-danger', 'is-invalid');
+    });
+  });
+
   // Edit modal dashboard
   const editDashboardPanel = document.getElementById('editDashboardPanel');
   const editPanelTitle = document.getElementById('editPanelTitle');
@@ -227,14 +235,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function validFormFieldInput(data) {
-    ['newTaskNameInput', 'newTaskDescInput', 'newTaskDateInput'].forEach(
-      (id) => {
-        const el = document.getElementById(id);
-        if (el) el.classList.remove('border-danger', 'is-invalid');
-      },
-    );
+    [
+      'newTaskNameInput',
+      'newTaskDescInput',
+      'newTaskDateInput',
+      'editTaskTitleInput',
+      'editTaskDescInput',
+      'editTaskDateInput',
+    ].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('border-danger', 'is-invalid');
+    });
     document
       .getElementById('newTaskStatusGrid')
+      ?.classList.remove('is-invalid');
+    document
+      .getElementById('editTaskStatusGrid')
       ?.classList.remove('is-invalid');
 
     if (!data.title || data.title.trim() === '') {
@@ -262,6 +278,16 @@ document.addEventListener('DOMContentLoaded', () => {
       return {
         isValid: false,
         message: 'Debes seleccionar una fecha de entrega.',
+      };
+    }
+    if (data.date < getTodayString()) {
+      const dateInput =
+        document.getElementById('editTaskDateInput') ||
+        document.getElementById('newTaskDateInput');
+      dateInput?.classList.add('border-danger', 'is-invalid');
+      return {
+        isValid: false,
+        message: 'La fecha de entrega no puede ser en el pasado.',
       };
     }
     if (!data.status || data.status.trim() === '') {
@@ -480,7 +506,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const validation = validFormFieldInput(formData);
-    const formAlert = document.getElementById('formAlert');
 
     if (!validation.isValid) {
       document.getElementById('formAlertMessage').textContent =
