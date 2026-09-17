@@ -62,7 +62,9 @@
           </div>
 
           <footer class="fw-semibold small text-center mt-4 mt-lg-0 opacity-75">
-            Created by <span class="text-white fw-bold">Mauricio</span>
+            <a href="https://netenebraes.github.io/about.html">
+              Created by <span class="text-white fw-bold">Mauricio</span>
+            </a>
           </footer>
         </aside>
 
@@ -83,11 +85,61 @@
                 AUG 05
               </h2>
               <hgroup>
-                <h3 class="h4 mb-1 fw-bold">Buenos días/Tardes/Noches</h3>
+                <h3 id="greetingText" class="h4 mb-1 fw-bold"></h3>
                 <p id="currentListTitle" class="mb-0 h5 fw-medium">
                   Tus tareas de hoy
                 </p>
               </hgroup>
+              <div
+                class="status-filter-group d-flex gap-2 ms-auto"
+                id="statusFilterGroup"
+              >
+                <button
+                  type="button"
+                  class="status-block selected"
+                  data-status="PORHACER"
+                >
+                  <span
+                    class="status-block-dot"
+                    style="--dot-color: var(--status-pending)"
+                  ></span>
+                  Pendiente
+                </button>
+                <button
+                  type="button"
+                  class="status-block selected"
+                  data-status="progress"
+                >
+                  <span
+                    class="status-block-dot"
+                    style="--dot-color: var(--status-progress)"
+                  ></span>
+                  En progreso
+                </button>
+                <button
+                  type="button"
+                  class="status-block selected"
+                  data-status="urgent"
+                >
+                  <span
+                    class="status-block-dot"
+                    style="--dot-color: var(--status-urgent)"
+                  ></span>
+                  Urgente
+                </button>
+
+                <button
+                  type="button"
+                  class="status-block selected"
+                  data-status="DONE"
+                >
+                  <span
+                    class="status-block-dot"
+                    style="--dot-color: var(--status-completed)"
+                  ></span>
+                  Completada
+                </button>
+              </div>
             </header>
 
             <!-- Buscador -->

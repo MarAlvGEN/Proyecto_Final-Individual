@@ -710,6 +710,40 @@ main.main-content-panel {
 }
 
 /* ============================================
+   STATUS FILTER GROUP (Header)
+   ============================================ */
+
+.status-filter-group {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.status-filter-group .status-block {
+  padding: 0.4rem 0.7rem;
+  font-size: 0.72rem;
+  border-radius: 30px;
+  white-space: nowrap;
+}
+
+.status-filter-group .status-block:not(.selected) {
+  background: rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+  opacity: 0.45;
+  box-shadow: none;
+}
+
+.status-filter-group .status-block:not(.selected) .status-block-dot {
+  box-shadow: none;
+  opacity: 0.5;
+}
+
+.status-filter-group .status-block:not(.selected):hover {
+  opacity: 0.7;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* ============================================
    EDIT MODAL - DASHBOARD PANEL
    ============================================ */
 
@@ -760,6 +794,10 @@ main.main-content-panel {
       transparent 50%
     ),
     linear-gradient(135deg, rgba(15, 12, 20, 0.98), rgba(8, 7, 11, 0.98));
+}
+a {
+  text-decoration: none;
+  color: var(--text-muted);
 }
 
 .modal-panel-dashboard[data-status='urgent'] {

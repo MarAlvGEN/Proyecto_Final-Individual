@@ -30,7 +30,7 @@ class TaskManager {
     return this.tasks.find((t) => t.id === id);
   }
 
-  getFiltered(listId, dateFilter = '', searchQuery = '') {
+  getFiltered(listId, dateFilter = '', searchQuery = '', statusFilters = []) {
     return this.tasks.filter((task) => {
       const matchesList = task.listId === listId;
       const matchesDate = dateFilter ? task.date === dateFilter : true;
@@ -38,7 +38,9 @@ class TaskManager {
         ? task.title.toLowerCase().includes(searchQuery) ||
           task.desc.toLowerCase().includes(searchQuery)
         : true;
-      return matchesList && matchesDate && matchesSearch;
+      const matchesStatus =
+        statusFilters.length === 0 || statusFilters.includes(task.status);
+      return matchesList && matchesDate && matchesSearch && matchesStatus;
     });
   }
 

@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let activeDateFilter = '';
   let activeSearchQuery = '';
 
+  const allStatuses = ['PORHACER', 'progress', 'DONE', 'urgent'];
+  let activeStatusFilters = loadStatusFilters();
+
   const listsContainer = document.getElementById('listsContainer');
   const taskList = document.getElementById('taskList');
   const currentListTitle = document.getElementById('currentListTitle');
@@ -17,6 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const clearDateBtn = document.getElementById('clearDateBtn');
   const searchInput = document.getElementById('searchInput');
   const searchBtn = document.getElementById('searchBtn');
+  const greetingText = document.getElementById('greetingText');
+  const statusFilterGroup = document.getElementById('statusFilterGroup');
 
   const saveListBtn = document.getElementById('saveListBtn');
   const newListInput = document.getElementById('newListInput');
@@ -164,6 +169,21 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   });
 
+  function loadStatusFilters() {
+    try {
+      const stored = localStorage.getItem('statusFilters');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return [...allStatuses];
+  }
+
+  function saveStatusFilters() {
+    localStorage.setItem('statusFilters', JSON.stringify(activeStatusFilters));
+  }
+
   function setDynamicHeaderDate() {
     const headerDate = document.querySelector('header h2');
     if (headerDate) {
@@ -172,6 +192,19 @@ document.addEventListener('DOMContentLoaded', () => {
       headerDate.textContent = today
         .toLocaleDateString('en-US', options)
         .toUpperCase();
+    }
+
+    if (greetingText) {
+      const hour = new Date().getHours();
+      let greeting;
+      if (hour >= 6 && hour < 12) {
+        greeting = 'Buenos días';
+      } else if (hour >= 12 && hour < 19) {
+        greeting = 'Buenas tardes';
+      } else {
+        greeting = 'Buenas noches';
+      }
+      greetingText.textContent = greeting;
     }
   }
 
@@ -391,6 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
       currentListId,
       activeDateFilter,
       activeSearchQuery,
+      activeStatusFilters,
     );
 
     if (filteredTasks.length === 0) {
@@ -554,6 +588,29 @@ document.addEventListener('DOMContentLoaded', () => {
     renderTasks();
   });
 
+  function syncFilterButtons() {
+    statusFilterGroup.querySelectorAll('.status-block').forEach((btn) => {
+      const isActive = activeStatusFilters.includes(btn.dataset.status);
+      btn.classList.toggle('selected', isActive);
+    });
+  }
+
+  statusFilterGroup.addEventListener('click', (e) => {
+    const btn = e.target.closest('.status-block');
+    if (!btn) return;
+    const status = btn.dataset.status;
+    btn.classList.toggle('selected');
+    if (btn.classList.contains('selected')) {
+      if (!activeStatusFilters.includes(status)) {
+        activeStatusFilters.push(status);
+      }
+    } else {
+      activeStatusFilters = activeStatusFilters.filter((s) => s !== status);
+    }
+    saveStatusFilters();
+    renderTasks();
+  });
+
   taskList.addEventListener('click', (event) => {
     const taskCard = event.target.closest('.task-card');
     if (taskCard) {
@@ -564,6 +621,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   setDynamicHeaderDate();
+  syncFilterButtons();
   renderLists();
   taskManager.render(renderTasks);
 });
