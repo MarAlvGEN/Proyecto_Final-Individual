@@ -27,11 +27,11 @@ class TaskManager {
   }
 
   getTaskById(id) {
-    return this.tasks.find(t => t.id === id);
+    return this.tasks.find((t) => t.id === id);
   }
 
   getFiltered(listId, dateFilter = '', searchQuery = '') {
-    return this.tasks.filter(task => {
+    return this.tasks.filter((task) => {
       const matchesList = task.listId === listId;
       const matchesDate = dateFilter ? task.date === dateFilter : true;
       const matchesSearch = searchQuery
@@ -102,7 +102,7 @@ class TaskManager {
       status: 'PORHACER',
       name: name,
       description: description,
-      dueDate: dueDate
+      dueDate: dueDate,
     };
     this.tasks.push(newTask);
     this.save();
@@ -126,7 +126,7 @@ class TaskManager {
   }
 
   update(id, data) {
-    const index = this.tasks.findIndex(t => t.id === id);
+    const index = this.tasks.findIndex((t) => t.id === id);
     if (index !== -1) {
       this.tasks[index] = {
         ...this.tasks[index],
@@ -140,7 +140,7 @@ class TaskManager {
   }
 
   delete(id) {
-    const index = this.tasks.findIndex(t => t.id === id);
+    const index = this.tasks.findIndex((t) => t.id === id);
     if (index !== -1) {
       this.tasks.splice(index, 1);
       this.save();
