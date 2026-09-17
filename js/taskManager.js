@@ -63,7 +63,7 @@ class TaskManager {
     return `${parts[2]}/${parts[1]}/${parts[0]}`;
   }
 
-  createTaskHtml(id, name, description, dueDate, status) {
+  createTaskHtml(id, name, description, dueDate, status, createdAt) {
     const statusInfo = this.getStatusInfo(status);
     const isDone = status === 'DONE';
     return `
@@ -81,7 +81,7 @@ class TaskManager {
             <i class="bi bi-calendar-event me-1 text-crimson"></i>
             <span>Entrega: ${this.formatDate(dueDate)}</span>
           </div>
-          <span class="small opacity-75">Creada: ${this.formatDate(dueDate)}</span>
+          <span class="small opacity-75">Creada: ${this.formatDate(createdAt)}</span>
         </div>
       </article>`;
   }
@@ -101,7 +101,7 @@ class TaskManager {
       desc: description,
       createdAt: this.getTodayString(),
       date: dueDate,
-      status: 'PORHACER',
+      status: status,
       name: name,
       description: description,
       dueDate: dueDate,

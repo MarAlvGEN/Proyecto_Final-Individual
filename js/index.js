@@ -75,10 +75,12 @@ document.addEventListener('DOMContentLoaded', () => {
       updateLivePreview();
     });
 
-  document.getElementById('newTaskModal').addEventListener('shown.bs.modal', () => {
-    selectStatusBlock('newTaskStatusGrid', 'PORHACER');
-    updateLivePreview();
-  });
+  document
+    .getElementById('newTaskModal')
+    .addEventListener('shown.bs.modal', () => {
+      selectStatusBlock('newTaskStatusGrid', 'PORHACER');
+      updateLivePreview();
+    });
 
   document
     .getElementById('editTaskStatusGrid')
@@ -99,8 +101,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const statusMeta = {
     PORHACER: { label: 'Pendiente', color: 'var(--status-pending)' },
     progress: { label: 'En progreso', color: 'var(--status-progress)' },
-    DONE: { label: 'Completada', color: 'var(--status-completed)' },
     urgent: { label: 'Urgente', color: 'var(--status-urgent)' },
+
+    DONE: { label: 'Completada', color: 'var(--status-completed)' },
   };
 
   function updateLivePreview() {
@@ -444,6 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
           task.desc,
           task.date,
           task.status,
+          task.createdAt,
         ),
       )
       .join('');
@@ -492,9 +496,9 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.status,
       );
       newTaskForm.reset();
-  document.getElementById('newTaskDateInput').value = getTodayString();
-  selectStatusBlock('newTaskStatusGrid', 'PORHACER');
-  updateLivePreview();
+      document.getElementById('newTaskDateInput').value = getTodayString();
+      selectStatusBlock('newTaskStatusGrid', 'PORHACER');
+      updateLivePreview();
       selectStatusBlock('newTaskStatusGrid', 'PORHACER');
       updateLivePreview();
 
