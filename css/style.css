@@ -743,6 +743,17 @@ main.main-content-panel {
   background: rgba(255, 255, 255, 0.04);
 }
 
+.header-layout {
+  display: flex;
+  align-items: center;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
 /* ============================================
    EDIT MODAL - DASHBOARD PANEL
    ============================================ */
@@ -1300,6 +1311,10 @@ select[data-status='urgent'] {
     padding: 0.5rem 0.6rem;
     font-size: 0.72rem;
   }
+
+  .header-layout .date-display {
+    font-size: 2rem;
+  }
 }
 
 @media (min-width: 992px) {
@@ -1309,5 +1324,41 @@ select[data-status='urgent'] {
   }
   .h-lg-100 {
     height: 100vh;
+  }
+}
+
+@media (max-width: 1500px) {
+  .header-layout {
+    flex-wrap: wrap;
+  }
+
+  .filter-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    width: fit-content;
+  }
+}
+
+@media (max-width: 1120px) {
+  .filter-buttons {
+    margin-top: 10px;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 1000px) {
+  .filter-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .filter-buttons .status-block {
+    font-size: 0.6rem;
+    padding: 0.3rem 0.4rem;
   }
 }
