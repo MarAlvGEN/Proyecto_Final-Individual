@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TODO APP</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="./assets/favicon/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicon/apple-touch-icon.png" />
+    <link rel="manifest" href="./assets/favicon/site.webmanifest" />
+
+    <!-- Meta -->
+    <meta name="description" content="Gestiona tus tareas de forma sencilla y eficiente." />
+    <meta name="theme-color" content="#ff0055" />
+    <meta name="color-scheme" content="dark" />
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -62,7 +74,9 @@
           </div>
 
           <footer class="fw-semibold small text-center mt-4 mt-lg-0 opacity-75">
-            Created by <span class="text-white fw-bold">Mauricio</span>
+            <a href="https://netenebraes.github.io" target="_blank">
+              Created by <span class="text-white fw-bold">Mauricio</span>
+            </a>
           </footer>
         </aside>
 
@@ -74,20 +88,68 @@
             class="main-content-panel text-white p-4 p-md-5 rounded-4 h-lg-100 d-flex flex-column min-h-0 position-relative shadow-2xl"
           >
             <!-- Título -->
-            <header
-              class="d-flex align-items-center mb-4 flex-shrink-0 header-banner"
-            >
+            <header class="header-layout mb-4 flex-shrink-0 header-banner">
               <h2
                 class="display-3 me-4 fw-black text-crimson date-display mb-0"
               >
                 AUG 05
               </h2>
               <hgroup>
-                <h3 class="h4 mb-1 fw-bold">Buenos días/Tardes/Noches</h3>
+                <h3 id="greetingText" class="h4 mb-1 fw-bold"></h3>
                 <p id="currentListTitle" class="mb-0 h5 fw-medium">
                   Tus tareas de hoy
                 </p>
               </hgroup>
+              <div
+                class="status-filter-group filter-buttons"
+                id="statusFilterGroup"
+              >
+                <button
+                  type="button"
+                  class="status-block selected"
+                  data-status="PORHACER"
+                >
+                  <span
+                    class="status-block-dot"
+                    style="--dot-color: var(--status-pending)"
+                  ></span>
+                  Pendiente
+                </button>
+                <button
+                  type="button"
+                  class="status-block selected"
+                  data-status="progress"
+                >
+                  <span
+                    class="status-block-dot"
+                    style="--dot-color: var(--status-progress)"
+                  ></span>
+                  En progreso
+                </button>
+                <button
+                  type="button"
+                  class="status-block selected"
+                  data-status="urgent"
+                >
+                  <span
+                    class="status-block-dot"
+                    style="--dot-color: var(--status-urgent)"
+                  ></span>
+                  Urgente
+                </button>
+
+                <button
+                  type="button"
+                  class="status-block selected"
+                  data-status="DONE"
+                >
+                  <span
+                    class="status-block-dot"
+                    style="--dot-color: var(--status-completed)"
+                  ></span>
+                  Completada
+                </button>
+              </div>
             </header>
 
             <!-- Buscador -->
@@ -134,7 +196,7 @@
         >
           <div class="w-100 text-center">
             <h3 class="h6 text-uppercase tracking-wider fw-bold mb-3">
-              Filtrar por Fecha
+              Fecha de entrega
             </h3>
             <div class="calendar-input-wrapper mb-3">
               <input
@@ -237,18 +299,41 @@
 
     <!-- Modal Nueva Tarea -->
     <div class="modal fade" id="newTaskModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-white border-crimson">
-          <div class="modal-header">
-            <h5 class="modal-title fw-bold">Nueva Tarea</h5>
+      <div class="modal-dialog modal-dialog-centered modal-horizontal">
+        <div class="modal-content text-white border-crimson modal-split">
+          <!-- Panel Visual Izquierdo -->
+          <div class="modal-panel-visual">
             <button
               type="button"
-              class="btn-close btn-close-white"
+              class="btn-close btn-close-white modal-close-float"
               data-bs-dismiss="modal"
               aria-label="Close"
             ></button>
+            <div class="modal-visual-content">
+              <span class="modal-visual-eyebrow">Crear</span>
+              <h2 class="modal-visual-title">Nueva<br />Tarea</h2>
+              <div class="modal-visual-accent"></div>
+              <div class="task-preview-card" id="taskPreviewCard">
+                <div class="preview-card-status">
+                  <span class="preview-dot" id="previewDot"></span>
+                  <span id="previewStatusText">Sin estado</span>
+                </div>
+                <h4 class="preview-card-title" id="previewTitle">
+                  Titulo de ejemplo
+                </h4>
+                <p class="preview-card-desc" id="previewDesc">
+                  La descripcion aparecera aqui mientras escribes...
+                </p>
+                <div class="preview-card-date">
+                  <i class="bi bi-calendar3"></i>
+                  <span id="previewDate">--/--/----</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="modal-body">
+
+          <!-- Panel Formulario Derecho -->
+          <div class="modal-panel-form">
             <div
               id="formAlert"
               class="alert alert-crimson-danger d-none mb-3 d-flex align-items-center gap-2"
@@ -260,58 +345,92 @@
               >
             </div>
             <form id="newTaskForm">
-              <div class="mb-3">
-                <label for="newTaskNameInput" class="form-label small fw-bold"
-                  >Título</label
+              <div class="modal-form-group">
+                <label for="newTaskNameInput" class="modal-field-label"
+                  >Titulo</label
                 >
                 <input
                   type="text"
                   id="newTaskNameInput"
-                  class="form-control custom-input"
+                  class="form-control custom-input modal-input"
+                  placeholder="Escribe el titulo..."
                 />
               </div>
-              <div class="mb-3">
-                <label for="newTaskDescInput" class="form-label small fw-bold"
-                  >Descripción</label
+              <div class="modal-form-group">
+                <label for="newTaskDescInput" class="modal-field-label"
+                  >Descripcion</label
                 >
                 <textarea
                   id="newTaskDescInput"
-                  class="form-control custom-input"
+                  class="form-control custom-input modal-input"
                   rows="2"
+                  placeholder="Añade detalles..."
                 ></textarea>
               </div>
-              <div class="mb-3">
-                <label for="newTaskDateInput" class="form-label small fw-bold"
+              <div class="modal-form-group">
+                <label for="newTaskDateInput" class="modal-field-label"
                   >Fecha de Entrega</label
                 >
                 <input
                   type="date"
                   id="newTaskDateInput"
-                  class="form-control custom-input"
+                  class="form-control custom-input modal-input"
                 />
               </div>
-              <div class="mb-3">
-                <label for="newTaskStatusInput" class="form-label small fw-bold"
-                  >Estado</label
-                >
-                <select
-                  id="newTaskStatusInput"
-                  class="form-select custom-input"
-                >
-                  <option value="">Selecciona un estado</option>
-                  <option value="PORHACER">Pendiente</option>
-                  <option value="progress">En progreso</option>
-                  <option value="DONE">Completada</option>
-                  <option value="urgent">Urgente</option>
-                </select>
+              <div class="modal-form-group">
+                <label class="modal-field-label mb-2">Estado</label>
+                <div class="status-grid" id="newTaskStatusGrid">
+                  <button
+                    type="button"
+                    class="status-block"
+                    data-status="PORHACER"
+                  >
+                    <span
+                      class="status-block-dot"
+                      style="--dot-color: var(--status-pending)"
+                    ></span>
+                    Pendiente
+                  </button>
+                  <button
+                    type="button"
+                    class="status-block"
+                    data-status="progress"
+                  >
+                    <span
+                      class="status-block-dot"
+                      style="--dot-color: var(--status-progress)"
+                    ></span>
+                    En progreso
+                  </button>
+                  <button
+                    type="button"
+                    class="status-block"
+                    data-status="urgent"
+                  >
+                    <span
+                      class="status-block-dot"
+                      style="--dot-color: var(--status-urgent)"
+                    ></span>
+                    Urgente
+                  </button>
+
+                  <button type="button" class="status-block" data-status="DONE">
+                    <span
+                      class="status-block-dot"
+                      style="--dot-color: var(--status-completed)"
+                    ></span>
+                    Completada
+                  </button>
+                  <input type="hidden" id="newTaskStatusInput" value="" />
+                </div>
               </div>
-            <button
-              type="submit"
-              class="btn btn-crimson text-white fw-bold w-100"
-              id="saveTaskBtn"
-            >
-              Guardar Tarea
-            </button>
+              <button
+                type="submit"
+                class="btn btn-crimson text-white fw-bold w-100 mt-2 modal-submit-btn"
+                id="saveTaskBtn"
+              >
+                Guardar Tarea
+              </button>
             </form>
           </div>
         </div>
@@ -320,110 +439,167 @@
 
     <!-- Modal Ver / Editar / Eliminar Tarea -->
     <div class="modal fade" id="editTaskModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-white border-crimson">
-          <div class="modal-header">
-            <h5 class="modal-title fw-bold">Detalles de la Tarea</h5>
+      <div class="modal-dialog modal-dialog-centered modal-horizontal">
+        <div class="modal-content text-white border-crimson modal-split">
+          <!-- Panel Visual Izquierdo - Dashboard -->
+          <div
+            class="modal-panel-visual modal-panel-dashboard"
+            id="editDashboardPanel"
+          >
             <button
               type="button"
-              class="btn-close btn-close-white"
+              class="btn-close btn-close-white modal-close-float"
               data-bs-dismiss="modal"
               aria-label="Close"
             ></button>
+            <div class="modal-visual-content">
+              <span class="modal-visual-eyebrow" id="editPanelEyebrow"
+                >Editar</span
+              >
+              <h2
+                class="modal-visual-title modal-visual-title-edit"
+                id="editPanelTitle"
+              >
+                Titulo de la tarea
+              </h2>
+              <div class="modal-visual-accent"></div>
+              <div class="edit-status-display" id="editStatusDisplay">
+                <span class="edit-status-dot" id="editStatusDot"></span>
+                <span class="edit-status-label" id="editStatusLabel"
+                  >Pendiente</span
+                >
+              </div>
+              <div class="edit-timeline">
+                <div class="timeline-item">
+                  <div class="timeline-marker timeline-marker-start"></div>
+                  <div class="timeline-line"></div>
+                  <div class="timeline-content">
+                    <span class="timeline-label">Creada</span>
+                    <span class="timeline-date" id="editTimelineCreated"
+                      >--/--/----</span
+                    >
+                  </div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-marker timeline-marker-end"></div>
+                  <div class="timeline-content">
+                    <span class="timeline-label">Entrega</span>
+                    <span class="timeline-date" id="editTimelineDue"
+                      >--/--/----</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="modal-body">
+
+          <!-- Panel Formulario Derecho -->
+          <div class="modal-panel-form">
             <form id="editTaskForm">
               <input type="hidden" id="editTaskId" />
-              <div class="mb-3">
-                <label for="editTaskTitleInput" class="form-label small fw-bold"
-                  >Título</label
+              <div class="modal-form-group">
+                <label for="editTaskTitleInput" class="modal-field-label"
+                  >Titulo</label
                 >
                 <input
                   type="text"
                   id="editTaskTitleInput"
-                  class="form-control custom-input"
+                  class="form-control custom-input modal-input"
                 />
               </div>
-              <div class="mb-3">
-                <label for="editTaskDescInput" class="form-label small fw-bold"
-                  >Descripción</label
+              <div class="modal-form-group">
+                <label for="editTaskDescInput" class="modal-field-label"
+                  >Descripcion</label
                 >
                 <textarea
                   id="editTaskDescInput"
-                  class="form-control custom-input"
-                  rows="3"
+                  class="form-control custom-input modal-input"
+                  rows="2"
                 ></textarea>
               </div>
-              <div class="mb-3">
-                <label for="editTaskListSelect" class="form-label small fw-bold"
+              <div class="modal-form-group">
+                <label for="editTaskListSelect" class="modal-field-label"
                   >Mover a Lista</label
                 >
                 <select
                   id="editTaskListSelect"
-                  class="form-select custom-input"
+                  class="form-select custom-input modal-input"
                 ></select>
               </div>
-              <div class="row">
-                <div class="col-6 mb-3">
-                  <label
-                    for="editTaskCreatedAtInput"
-                    class="form-label small fw-bold"
-                    >Creación</label
+              <div class="modal-form-group">
+                <label for="editTaskDateInput" class="modal-field-label"
+                  >Fecha de Entrega</label
+                >
+                <input
+                  type="date"
+                  id="editTaskDateInput"
+                  class="form-control custom-input modal-input"
+                />
+              </div>
+              <div class="modal-form-group">
+                <label class="modal-field-label mb-2">Estado</label>
+                <div class="status-grid" id="editTaskStatusGrid">
+                  <button
+                    type="button"
+                    class="status-block"
+                    data-status="PORHACER"
                   >
-                  <input
-                    type="text"
-                    id="editTaskCreatedAtInput"
-                    class="form-control custom-input"
-                    disabled
-                  />
-                </div>
-                <div class="col-6 mb-3">
-                  <label
-                    for="editTaskDateInput"
-                    class="form-label small fw-bold"
-                    >Entrega</label
+                    <span
+                      class="status-block-dot"
+                      style="--dot-color: var(--status-pending)"
+                    ></span>
+                    Pendiente
+                  </button>
+                  <button
+                    type="button"
+                    class="status-block"
+                    data-status="progress"
                   >
-                  <input
-                    type="date"
-                    id="editTaskDateInput"
-                    class="form-control custom-input"
-                  />
+                    <span
+                      class="status-block-dot"
+                      style="--dot-color: var(--status-progress)"
+                    ></span>
+                    En progreso
+                  </button>
+                  <button
+                    type="button"
+                    class="status-block"
+                    data-status="urgent"
+                  >
+                    <span
+                      class="status-block-dot"
+                      style="--dot-color: var(--status-urgent)"
+                    ></span>
+                    Urgente
+                  </button>
+
+                  <button type="button" class="status-block" data-status="DONE">
+                    <span
+                      class="status-block-dot"
+                      style="--dot-color: var(--status-completed)"
+                    ></span>
+                    Completada
+                  </button>
+                  <input type="hidden" id="editTaskStatusInput" value="" />
                 </div>
               </div>
-              <div class="mb-3">
-                <label
-                  for="editTaskStatusInput"
-                  class="form-label small fw-bold"
-                  >Estado</label
+              <div class="modal-footer-actions">
+                <button
+                  type="button"
+                  class="btn btn-outline-danger fw-bold"
+                  id="deleteTaskBtn"
                 >
-                <select
-                  id="editTaskStatusInput"
-                  class="form-select custom-input"
+                  <i class="bi bi-trash me-1"></i> Borrar
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-crimson text-white fw-bold modal-submit-btn"
+                  id="updateTaskBtn"
                 >
-                  <option value="">Selecciona un estado</option>
-                  <option value="PORHACER">Pendiente</option>
-                  <option value="progress">En progreso</option>
-                  <option value="DONE">Completada</option>
-                  <option value="urgent">Urgente</option>
-                </select>
+                  Guardar Cambios
+                </button>
               </div>
             </form>
-          </div>
-          <div class="modal-footer d-flex justify-content-between">
-            <button
-              type="button"
-              class="btn btn-outline-danger fw-bold"
-              id="deleteTaskBtn"
-            >
-              <i class="bi bi-trash me-1"></i> Borrar
-            </button>
-            <button
-              type="button"
-              class="btn btn-crimson text-white fw-bold"
-              id="updateTaskBtn"
-            >
-              Guardar Cambios
-            </button>
           </div>
         </div>
       </div>

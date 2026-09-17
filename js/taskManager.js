@@ -27,18 +27,20 @@ class TaskManager {
   }
 
   getTaskById(id) {
-    return this.tasks.find(t => t.id === id);
+    return this.tasks.find((t) => t.id === id);
   }
 
-  getFiltered(listId, dateFilter = '', searchQuery = '') {
-    return this.tasks.filter(task => {
+  getFiltered(listId, dateFilter = '', searchQuery = '', statusFilters = []) {
+    return this.tasks.filter((task) => {
       const matchesList = task.listId === listId;
       const matchesDate = dateFilter ? task.date === dateFilter : true;
       const matchesSearch = searchQuery
         ? task.title.toLowerCase().includes(searchQuery) ||
           task.desc.toLowerCase().includes(searchQuery)
         : true;
-      return matchesList && matchesDate && matchesSearch;
+      const matchesStatus =
+        statusFilters.length === 0 || statusFilters.includes(task.status);
+      return matchesList && matchesDate && matchesSearch && matchesStatus;
     });
   }
 
@@ -61,7 +63,7 @@ class TaskManager {
     return `${parts[2]}/${parts[1]}/${parts[0]}`;
   }
 
-  createTaskHtml(id, name, description, dueDate, status) {
+  createTaskHtml(id, name, description, dueDate, status, createdAt) {
     const statusInfo = this.getStatusInfo(status);
     const isDone = status === 'DONE';
     return `
@@ -79,7 +81,7 @@ class TaskManager {
             <i class="bi bi-calendar-event me-1 text-crimson"></i>
             <span>Entrega: ${this.formatDate(dueDate)}</span>
           </div>
-          <span class="small opacity-75">Creada: ${this.formatDate(dueDate)}</span>
+          <span class="small opacity-75">Creada: ${this.formatDate(createdAt)}</span>
         </div>
       </article>`;
   }
@@ -99,10 +101,10 @@ class TaskManager {
       desc: description,
       createdAt: this.getTodayString(),
       date: dueDate,
-      status: 'PORHACER',
+      status: status,
       name: name,
       description: description,
-      dueDate: dueDate
+      dueDate: dueDate,
     };
     this.tasks.push(newTask);
     this.save();
@@ -126,7 +128,7 @@ class TaskManager {
   }
 
   update(id, data) {
-    const index = this.tasks.findIndex(t => t.id === id);
+    const index = this.tasks.findIndex((t) => t.id === id);
     if (index !== -1) {
       this.tasks[index] = {
         ...this.tasks[index],
@@ -140,7 +142,7 @@ class TaskManager {
   }
 
   delete(id) {
-    const index = this.tasks.findIndex(t => t.id === id);
+    const index = this.tasks.findIndex((t) => t.id === id);
     if (index !== -1) {
       this.tasks.splice(index, 1);
       this.save();

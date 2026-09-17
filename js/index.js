@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let activeDateFilter = '';
   let activeSearchQuery = '';
 
+  const allStatuses = ['PORHACER', 'progress', 'DONE', 'urgent'];
+  let activeStatusFilters = loadStatusFilters();
+
   const listsContainer = document.getElementById('listsContainer');
   const taskList = document.getElementById('taskList');
   const currentListTitle = document.getElementById('currentListTitle');
@@ -17,6 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const clearDateBtn = document.getElementById('clearDateBtn');
   const searchInput = document.getElementById('searchInput');
   const searchBtn = document.getElementById('searchBtn');
+  const greetingText = document.getElementById('greetingText');
+  const statusFilterGroup = document.getElementById('statusFilterGroup');
 
   const saveListBtn = document.getElementById('saveListBtn');
   const newListInput = document.getElementById('newListInput');
@@ -26,29 +31,139 @@ document.addEventListener('DOMContentLoaded', () => {
   const editTaskTitleInput = document.getElementById('editTaskTitleInput');
   const editTaskDescInput = document.getElementById('editTaskDescInput');
   const editTaskListSelect = document.getElementById('editTaskListSelect');
-  const editTaskCreatedAtInput = document.getElementById(
-    'editTaskCreatedAtInput',
-  );
   const editTaskDateInput = document.getElementById('editTaskDateInput');
   const editTaskStatusInput = document.getElementById('editTaskStatusInput');
   const newTaskStatusInput = document.getElementById('newTaskStatusInput');
   const updateTaskBtn = document.getElementById('updateTaskBtn');
   const deleteTaskBtn = document.getElementById('deleteTaskBtn');
 
-  function updateSelectStatusColor(selectElement) {
-    if (selectElement) {
-      selectElement.setAttribute('data-status', selectElement.value);
+  // Status grid helpers
+  function selectStatusBlock(gridId, status) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+    grid.querySelectorAll('.status-block').forEach((block) => {
+      block.classList.toggle('selected', block.dataset.status === status);
+    });
+    const hiddenInput = grid.querySelector('input[type="hidden"]');
+    if (hiddenInput) hiddenInput.value = status;
+  }
+
+  function getSelectedStatus(gridId) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return '';
+    const hiddenInput = grid.querySelector('input[type="hidden"]');
+    return hiddenInput ? hiddenInput.value : '';
+  }
+
+  function clearStatusGrid(gridId) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+    grid
+      .querySelectorAll('.status-block')
+      .forEach((b) => b.classList.remove('selected'));
+    const hiddenInput = grid.querySelector('input[type="hidden"]');
+    if (hiddenInput) hiddenInput.value = '';
+  }
+
+  // Status grid click handlers
+  document
+    .getElementById('newTaskStatusGrid')
+    .addEventListener('click', (e) => {
+      const block = e.target.closest('.status-block');
+      if (!block) return;
+      selectStatusBlock('newTaskStatusGrid', block.dataset.status);
+      updateLivePreview();
+    });
+
+  document
+    .getElementById('newTaskModal')
+    .addEventListener('shown.bs.modal', () => {
+      selectStatusBlock('newTaskStatusGrid', 'PORHACER');
+      updateLivePreview();
+    });
+
+  document
+    .getElementById('editTaskStatusGrid')
+    .addEventListener('click', (e) => {
+      const block = e.target.closest('.status-block');
+      if (!block) return;
+      selectStatusBlock('editTaskStatusGrid', block.dataset.status);
+      updateEditDashboardStatus(block.dataset.status);
+    });
+
+  // Live preview for new task modal
+  const previewTitle = document.getElementById('previewTitle');
+  const previewDesc = document.getElementById('previewDesc');
+  const previewDate = document.getElementById('previewDate');
+  const previewDot = document.getElementById('previewDot');
+  const previewStatusText = document.getElementById('previewStatusText');
+
+  const statusMeta = {
+    PORHACER: { label: 'Pendiente', color: 'var(--status-pending)' },
+    progress: { label: 'En progreso', color: 'var(--status-progress)' },
+    urgent: { label: 'Urgente', color: 'var(--status-urgent)' },
+
+    DONE: { label: 'Completada', color: 'var(--status-completed)' },
+  };
+
+  function updateLivePreview() {
+    const title = document.getElementById('newTaskNameInput').value.trim();
+    const desc = document.getElementById('newTaskDescInput').value.trim();
+    const date = document.getElementById('newTaskDateInput').value;
+    const status = getSelectedStatus('newTaskStatusGrid');
+
+    previewTitle.textContent = title || 'Titulo de ejemplo';
+    previewDesc.textContent =
+      desc || 'La descripcion aparecera aqui mientras escribes...';
+    previewDate.textContent = date ? formatDate(date) : '--/--/----';
+
+    if (status && statusMeta[status]) {
+      previewDot.style.background = statusMeta[status].color;
+      previewStatusText.textContent = statusMeta[status].label;
+      previewStatusText.style.color = statusMeta[status].color;
+    } else {
+      previewDot.style.background = 'var(--text-muted)';
+      previewStatusText.textContent = 'Sin estado';
+      previewStatusText.style.color = 'var(--text-muted)';
     }
   }
 
-  [newTaskStatusInput, editTaskStatusInput].forEach((select) => {
-    if (select) {
-      updateSelectStatusColor(select);
-      select.addEventListener('change', (e) =>
-        updateSelectStatusColor(e.target),
-      );
-    }
+  document
+    .getElementById('newTaskNameInput')
+    .addEventListener('input', updateLivePreview);
+  document
+    .getElementById('newTaskDescInput')
+    .addEventListener('input', updateLivePreview);
+  document
+    .getElementById('newTaskDateInput')
+    .addEventListener('input', updateLivePreview);
+
+  const formAlert = document.getElementById('formAlert');
+  ['newTaskNameInput', 'newTaskDescInput', 'newTaskDateInput'].forEach((id) => {
+    document.getElementById(id)?.addEventListener('input', (e) => {
+      formAlert?.classList.add('d-none');
+      e.target.classList.remove('border-danger', 'is-invalid');
+    });
   });
+
+  // Edit modal dashboard
+  const editDashboardPanel = document.getElementById('editDashboardPanel');
+  const editPanelTitle = document.getElementById('editPanelTitle');
+  const editStatusDisplay = document.getElementById('editStatusDisplay');
+  const editStatusDot = document.getElementById('editStatusDot');
+  const editStatusLabel = document.getElementById('editStatusLabel');
+  const editTimelineCreated = document.getElementById('editTimelineCreated');
+  const editTimelineDue = document.getElementById('editTimelineDue');
+
+  function updateEditDashboardStatus(status) {
+    editDashboardPanel.setAttribute('data-status', status);
+    editStatusDisplay.setAttribute('data-status', status);
+    const meta = statusMeta[status] || {
+      label: 'Pendiente',
+      color: 'var(--text-muted)',
+    };
+    editStatusLabel.textContent = meta.label;
+  }
 
   document.getElementById('newTaskDateInput').value = getTodayString();
 
@@ -65,6 +180,21 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   });
 
+  function loadStatusFilters() {
+    try {
+      const stored = localStorage.getItem('statusFilters');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return [...allStatuses];
+  }
+
+  function saveStatusFilters() {
+    localStorage.setItem('statusFilters', JSON.stringify(activeStatusFilters));
+  }
+
   function setDynamicHeaderDate() {
     const headerDate = document.querySelector('header h2');
     if (headerDate) {
@@ -73,6 +203,19 @@ document.addEventListener('DOMContentLoaded', () => {
       headerDate.textContent = today
         .toLocaleDateString('en-US', options)
         .toUpperCase();
+    }
+
+    if (greetingText) {
+      const hour = new Date().getHours();
+      let greeting;
+      if (hour >= 6 && hour < 12) {
+        greeting = 'Buenos días';
+      } else if (hour >= 12 && hour < 19) {
+        greeting = 'Buenas tardes';
+      } else {
+        greeting = 'Buenas noches';
+      }
+      greetingText.textContent = greeting;
     }
   }
 
@@ -92,16 +235,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function validFormFieldInput(data) {
-    const inputs = [
+    [
       'newTaskNameInput',
       'newTaskDescInput',
       'newTaskDateInput',
-      'newTaskStatusInput',
-    ];
-    inputs.forEach((id) => {
+      'editTaskTitleInput',
+      'editTaskDescInput',
+      'editTaskDateInput',
+    ].forEach((id) => {
       const el = document.getElementById(id);
       if (el) el.classList.remove('border-danger', 'is-invalid');
     });
+    document
+      .getElementById('newTaskStatusGrid')
+      ?.classList.remove('is-invalid');
+    document
+      .getElementById('editTaskStatusGrid')
+      ?.classList.remove('is-invalid');
 
     if (!data.title || data.title.trim() === '') {
       document
@@ -109,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ?.classList.add('border-danger', 'is-invalid');
       return {
         isValid: false,
-        message: 'El campo "Título" no puede estar vacío.',
+        message: 'El campo "Titulo" no puede estar vacio.',
       };
     }
     if (!data.desc || data.desc.trim() === '') {
@@ -118,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ?.classList.add('border-danger', 'is-invalid');
       return {
         isValid: false,
-        message: 'El campo "Descripción" no puede estar vacío.',
+        message: 'El campo "Descripcion" no puede estar vacio.',
       };
     }
     if (!data.date || data.date.trim() === '') {
@@ -130,10 +280,18 @@ document.addEventListener('DOMContentLoaded', () => {
         message: 'Debes seleccionar una fecha de entrega.',
       };
     }
+    if (data.date < getTodayString()) {
+      const dateInput =
+        document.getElementById('editTaskDateInput') ||
+        document.getElementById('newTaskDateInput');
+      dateInput?.classList.add('border-danger', 'is-invalid');
+      return {
+        isValid: false,
+        message: 'La fecha de entrega no puede ser en el pasado.',
+      };
+    }
     if (!data.status || data.status.trim() === '') {
-      document
-        .getElementById('newTaskStatusInput')
-        ?.classList.add('border-danger', 'is-invalid');
+      document.getElementById('newTaskStatusGrid')?.classList.add('is-invalid');
       return {
         isValid: false,
         message: 'Debes seleccionar un estado para la tarea.',
@@ -258,12 +416,23 @@ document.addEventListener('DOMContentLoaded', () => {
     editTaskId.value = task.id;
     editTaskTitleInput.value = task.title;
     editTaskDescInput.value = task.desc;
-    editTaskCreatedAtInput.value = formatDate(task.createdAt);
     editTaskDateInput.value = task.date;
     editTaskStatusInput.value = task.status;
 
-    updateSelectStatusColor(editTaskStatusInput);
+    // Populate dashboard panel
+    editPanelTitle.textContent = task.title;
+    editTimelineCreated.textContent = task.createdAt
+      ? formatDate(task.createdAt)
+      : '--/--/----';
+    editTimelineDue.textContent = task.date
+      ? formatDate(task.date)
+      : '--/--/----';
+    updateEditDashboardStatus(task.status);
 
+    // Select correct status block
+    selectStatusBlock('editTaskStatusGrid', task.status);
+
+    // Populate list dropdown
     editTaskListSelect.innerHTML = '';
     const lists = listManager.getAll();
     lists.forEach((l) => {
@@ -284,6 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
       currentListId,
       activeDateFilter,
       activeSearchQuery,
+      activeStatusFilters,
     );
 
     if (filteredTasks.length === 0) {
@@ -303,6 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
           task.desc,
           task.date,
           task.status,
+          task.createdAt,
         ),
       )
       .join('');
@@ -331,11 +502,10 @@ document.addEventListener('DOMContentLoaded', () => {
       title: document.querySelector('#newTaskNameInput').value,
       desc: document.querySelector('#newTaskDescInput').value,
       date: document.querySelector('#newTaskDateInput').value,
-      status: document.querySelector('#newTaskStatusInput').value,
+      status: getSelectedStatus('newTaskStatusGrid'),
     };
 
     const validation = validFormFieldInput(formData);
-    const formAlert = document.getElementById('formAlert');
 
     if (!validation.isValid) {
       document.getElementById('formAlertMessage').textContent =
@@ -351,7 +521,11 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.status,
       );
       newTaskForm.reset();
-      updateSelectStatusColor(newTaskStatusInput);
+      document.getElementById('newTaskDateInput').value = getTodayString();
+      selectStatusBlock('newTaskStatusGrid', 'PORHACER');
+      updateLivePreview();
+      selectStatusBlock('newTaskStatusGrid', 'PORHACER');
+      updateLivePreview();
 
       const modalInstance = bootstrap.Modal.getInstance(
         document.getElementById('newTaskModal'),
@@ -368,7 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
       title: editTaskTitleInput.value.trim(),
       desc: editTaskDescInput.value.trim(),
       date: editTaskDateInput.value,
-      status: editTaskStatusInput.value,
+      status: getSelectedStatus('editTaskStatusGrid'),
       listId: editTaskListSelect.value,
     };
 
@@ -376,7 +550,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!validation.isValid) {
       Swal.fire({
         icon: 'error',
-        title: 'Error de validación',
+        title: 'Error de validacion',
         text: validation.message,
         background: '#120d18',
         color: '#fff',
@@ -443,6 +617,29 @@ document.addEventListener('DOMContentLoaded', () => {
     renderTasks();
   });
 
+  function syncFilterButtons() {
+    statusFilterGroup.querySelectorAll('.status-block').forEach((btn) => {
+      const isActive = activeStatusFilters.includes(btn.dataset.status);
+      btn.classList.toggle('selected', isActive);
+    });
+  }
+
+  statusFilterGroup.addEventListener('click', (e) => {
+    const btn = e.target.closest('.status-block');
+    if (!btn) return;
+    const status = btn.dataset.status;
+    btn.classList.toggle('selected');
+    if (btn.classList.contains('selected')) {
+      if (!activeStatusFilters.includes(status)) {
+        activeStatusFilters.push(status);
+      }
+    } else {
+      activeStatusFilters = activeStatusFilters.filter((s) => s !== status);
+    }
+    saveStatusFilters();
+    renderTasks();
+  });
+
   taskList.addEventListener('click', (event) => {
     const taskCard = event.target.closest('.task-card');
     if (taskCard) {
@@ -453,6 +650,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   setDynamicHeaderDate();
+  syncFilterButtons();
   renderLists();
   taskManager.render(renderTasks);
 });

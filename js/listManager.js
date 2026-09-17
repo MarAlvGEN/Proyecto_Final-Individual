@@ -31,7 +31,7 @@ class ListManager {
   }
 
   getById(id) {
-    return this.lists.find(l => l.id === id);
+    return this.lists.find((l) => l.id === id);
   }
 
   create(name) {
@@ -42,7 +42,7 @@ class ListManager {
   }
 
   update(id, name) {
-    const index = this.lists.findIndex(l => l.id === id);
+    const index = this.lists.findIndex((l) => l.id === id);
     if (index !== -1) {
       this.lists[index].name = name.trim();
       this.save();
@@ -53,9 +53,12 @@ class ListManager {
 
   delete(id) {
     if (this.lists.length <= 1) {
-      return { success: false, reason: 'Debes mantener al menos una lista activa.' };
+      return {
+        success: false,
+        reason: 'Debes mantener al menos una lista activa.',
+      };
     }
-    const index = this.lists.findIndex(l => l.id === id);
+    const index = this.lists.findIndex((l) => l.id === id);
     if (index !== -1) {
       this.lists.splice(index, 1);
       this.save();
