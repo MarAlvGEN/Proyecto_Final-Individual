@@ -346,6 +346,679 @@ main.main-content-panel {
     0 25px 50px rgba(0, 0, 0, 0.9),
     0 0 30px rgba(255, 0, 85, 0.15);
   border-radius: 20px;
+  min-width: 50vw;
+}
+
+/* ============================================
+   MODAL HORIZONTAL - SPLIT PANELS
+   ============================================ */
+
+.modal-dialog-centered {
+  justify-content: center;
+}
+
+.modal-horizontal .modal-dialog {
+  max-width: 1050px;
+}
+
+.modal-split {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  min-height: 480px;
+}
+
+/* --- Panel Visual Izquierdo --- */
+.modal-panel-visual {
+  width: 38%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2.5rem 2rem;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      ellipse at 20% 50%,
+      rgba(255, 0, 85, 0.15) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse at 80% 20%,
+      rgba(121, 0, 255, 0.1) 0%,
+      transparent 50%
+    ),
+    linear-gradient(135deg, rgba(15, 12, 20, 0.98), rgba(8, 7, 11, 0.98));
+  border-right: 1px solid var(--border-subtle);
+  animation: meshShift 8s ease-in-out infinite alternate;
+}
+
+.modal-panel-visual::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background:
+    radial-gradient(
+      circle at 30% 40%,
+      rgba(255, 0, 85, 0.08) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 70% 60%,
+      rgba(121, 0, 255, 0.06) 0%,
+      transparent 35%
+    );
+  animation: meshFloat 12s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes meshShift {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+@keyframes meshFloat {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate(30px, -20px) rotate(3deg);
+  }
+}
+
+.modal-close-float {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 5;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.modal-close-float:hover {
+  opacity: 1;
+}
+
+.modal-visual-content {
+  position: relative;
+  z-index: 2;
+}
+
+.modal-visual-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--color-crimson);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.modal-visual-title {
+  font-family: var(--font-heading);
+  font-size: 2.8rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -1.5px;
+  margin: 0;
+  background: linear-gradient(135deg, #ffffff 30%, var(--color-crimson) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.modal-visual-accent {
+  width: 50px;
+  height: 3px;
+  background: var(--color-crimson);
+  border-radius: 3px;
+  margin: 1rem 0;
+  box-shadow: 0 0 15px var(--color-crimson-glow);
+  animation: accentPulse 3s ease-in-out infinite;
+}
+
+@keyframes accentPulse {
+  0%,
+  100% {
+    width: 50px;
+    opacity: 0.8;
+  }
+  50% {
+    width: 70px;
+    opacity: 1;
+  }
+}
+
+/* --- Task Preview Card (New Task Modal) --- */
+.task-preview-card {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.task-preview-card:hover {
+  border-color: rgba(255, 0, 85, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.preview-card-status {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.preview-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: background 0.3s ease;
+}
+
+.preview-card-status span:last-child {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  transition: color 0.3s ease;
+}
+
+.preview-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.3rem;
+  min-height: 1.2em;
+}
+
+.preview-card-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0 0 0.5rem;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.2em;
+}
+
+.preview-card-date {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid var(--border-card);
+}
+
+.preview-card-date i {
+  color: var(--color-crimson);
+}
+
+/* --- Panel Formulario Derecho --- */
+.modal-panel-form {
+  width: 62%;
+  padding: 2rem 2.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.modal-form-group {
+  margin-bottom: 1rem;
+}
+
+.modal-field-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+  transition: color 0.2s ease;
+}
+
+.modal-input {
+  width: 100%;
+  transition: all 0.25s ease;
+}
+
+.modal-input:focus + .modal-field-label,
+.modal-input:focus {
+  color: var(--text-primary);
+}
+
+.modal-submit-btn {
+  padding: 0.7rem 1.5rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.modal-submit-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* ============================================
+   STATUS GRID - SELECTOR VISUAL
+   ============================================ */
+
+.status-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.status-block {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-card);
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+  text-align: left;
+}
+
+.status-block:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+.status-block-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--dot-color);
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 0 2px transparent;
+}
+
+/* Selected state per status */
+.status-block.selected[data-status='PORHACER'] {
+  background: var(--status-pending-bg);
+  border-color: var(--status-pending-border);
+  color: var(--status-pending);
+  box-shadow: 0 0 15px rgba(255, 170, 0, 0.2);
+}
+.status-block.selected[data-status='PORHACER'] .status-block-dot {
+  box-shadow: 0 0 0 3px rgba(255, 170, 0, 0.3);
+}
+
+.status-block.selected[data-status='progress'] {
+  background: var(--status-progress-bg);
+  border-color: var(--status-progress-border);
+  color: var(--status-progress);
+  box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+}
+.status-block.selected[data-status='progress'] .status-block-dot {
+  box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.3);
+}
+
+.status-block.selected[data-status='DONE'] {
+  background: var(--status-completed-bg);
+  border-color: var(--status-completed-border);
+  color: var(--status-completed);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+}
+.status-block.selected[data-status='DONE'] .status-block-dot {
+  box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.3);
+}
+
+.status-block.selected[data-status='urgent'] {
+  background: var(--status-urgent-bg);
+  border-color: var(--status-urgent-border);
+  color: var(--status-urgent);
+  box-shadow: 0 0 15px rgba(255, 0, 85, 0.25);
+}
+.status-block.selected[data-status='urgent'] .status-block-dot {
+  box-shadow: 0 0 0 3px rgba(255, 0, 85, 0.3);
+  animation: urgentPulse 2s ease-in-out infinite;
+}
+
+@keyframes urgentPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px rgba(255, 0, 85, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(255, 0, 85, 0.15);
+  }
+}
+
+/* ============================================
+   EDIT MODAL - DASHBOARD PANEL
+   ============================================ */
+
+.modal-panel-dashboard {
+  transition: all 0.5s ease;
+}
+
+.modal-panel-dashboard[data-status='PORHACER'] {
+  background:
+    radial-gradient(
+      ellipse at 20% 50%,
+      rgba(255, 170, 0, 0.12) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse at 80% 20%,
+      rgba(255, 170, 0, 0.05) 0%,
+      transparent 50%
+    ),
+    linear-gradient(135deg, rgba(15, 12, 20, 0.98), rgba(8, 7, 11, 0.98));
+}
+
+.modal-panel-dashboard[data-status='progress'] {
+  background:
+    radial-gradient(
+      ellipse at 20% 50%,
+      rgba(0, 210, 255, 0.12) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse at 80% 20%,
+      rgba(0, 210, 255, 0.05) 0%,
+      transparent 50%
+    ),
+    linear-gradient(135deg, rgba(15, 12, 20, 0.98), rgba(8, 7, 11, 0.98));
+}
+
+.modal-panel-dashboard[data-status='DONE'] {
+  background:
+    radial-gradient(
+      ellipse at 20% 50%,
+      rgba(0, 255, 136, 0.12) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse at 80% 20%,
+      rgba(0, 255, 136, 0.05) 0%,
+      transparent 50%
+    ),
+    linear-gradient(135deg, rgba(15, 12, 20, 0.98), rgba(8, 7, 11, 0.98));
+}
+
+.modal-panel-dashboard[data-status='urgent'] {
+  background:
+    radial-gradient(
+      ellipse at 20% 50%,
+      rgba(255, 0, 85, 0.15) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse at 80% 20%,
+      rgba(255, 0, 85, 0.06) 0%,
+      transparent 50%
+    ),
+    linear-gradient(135deg, rgba(15, 12, 20, 0.98), rgba(8, 7, 11, 0.98));
+}
+
+.modal-visual-title-edit {
+  font-size: 2.2rem;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.edit-status-display {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-card);
+  margin-bottom: 1.2rem;
+  transition: all 0.4s ease;
+}
+
+.edit-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transition: all 0.4s ease;
+}
+
+.edit-status-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: color 0.4s ease;
+}
+
+/* Status display colors */
+.edit-status-display[data-status='PORHACER'] {
+  border-color: var(--status-pending-border);
+  box-shadow: 0 0 12px rgba(255, 170, 0, 0.15);
+}
+.edit-status-display[data-status='PORHACER'] .edit-status-dot {
+  background: var(--status-pending);
+  box-shadow: 0 0 8px var(--status-pending);
+}
+.edit-status-display[data-status='PORHACER'] .edit-status-label {
+  color: var(--status-pending);
+}
+
+.edit-status-display[data-status='progress'] {
+  border-color: var(--status-progress-border);
+  box-shadow: 0 0 12px rgba(0, 210, 255, 0.15);
+}
+.edit-status-display[data-status='progress'] .edit-status-dot {
+  background: var(--status-progress);
+  box-shadow: 0 0 8px var(--status-progress);
+}
+.edit-status-display[data-status='progress'] .edit-status-label {
+  color: var(--status-progress);
+}
+
+.edit-status-display[data-status='DONE'] {
+  border-color: var(--status-completed-border);
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.15);
+}
+.edit-status-display[data-status='DONE'] .edit-status-dot {
+  background: var(--status-completed);
+  box-shadow: 0 0 8px var(--status-completed);
+}
+.edit-status-display[data-status='DONE'] .edit-status-label {
+  color: var(--status-completed);
+}
+
+.edit-status-display[data-status='urgent'] {
+  border-color: var(--status-urgent-border);
+  box-shadow: 0 0 12px rgba(255, 0, 85, 0.2);
+}
+.edit-status-display[data-status='urgent'] .edit-status-dot {
+  background: var(--status-urgent);
+  box-shadow: 0 0 8px var(--status-urgent);
+}
+.edit-status-display[data-status='urgent'] .edit-status-label {
+  color: var(--status-urgent);
+}
+
+/* --- Timeline --- */
+.edit-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  position: relative;
+  padding-bottom: 1.2rem;
+}
+
+.timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.timeline-marker {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-crimson);
+  flex-shrink: 0;
+  margin-top: 3px;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 0 8px var(--color-crimson-glow);
+}
+
+.timeline-marker-end {
+  background: var(--color-accent);
+}
+
+.timeline-line {
+  position: absolute;
+  left: 4px;
+  top: 13px;
+  width: 2px;
+  height: calc(100% - 6px);
+  background: linear-gradient(
+    to bottom,
+    var(--color-crimson),
+    rgba(255, 0, 85, 0.2)
+  );
+  z-index: 1;
+  border-radius: 2px;
+}
+
+.timeline-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.timeline-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+}
+
+.timeline-date {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* --- Footer Actions (Edit Modal) --- */
+.modal-footer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-card);
+}
+
+.modal-footer-actions .btn-outline-danger {
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+}
+
+.modal-footer-actions .modal-submit-btn {
+  border-radius: 10px;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.8rem;
+}
+
+/* ============================================
+   MODAL ANIMATIONS
+   ============================================ */
+
+.modal.fade .modal-dialog {
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.3s ease;
+}
+
+.modal.show .modal-dialog {
+  animation: modalSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Focus micro-interactions */
+.modal-input:focus {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  border-color: var(--color-crimson) !important;
+  box-shadow:
+    0 0 0 3px rgba(255, 0, 85, 0.15),
+    0 0 15px rgba(255, 0, 85, 0.1) !important;
+  transform: translateY(-1px);
+}
+
+.modal-input::placeholder {
+  color: rgba(196, 192, 214, 0.4);
+  font-style: italic;
+}
+
+.status-grid.is-invalid {
+  outline: 2px solid var(--color-crimson);
+  outline-offset: 2px;
+  border-radius: 12px;
+  animation: gridShake 0.4s ease;
+}
+
+@keyframes gridShake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-4px);
+  }
+  40% {
+    transform: translateX(4px);
+  }
+  60% {
+    transform: translateX(-3px);
+  }
+  80% {
+    transform: translateX(3px);
+  }
 }
 
 .form-control.custom-input,
@@ -526,6 +1199,69 @@ select[data-status='urgent'] {
 .btn-toggle-complete i {
   font-size: 1.1rem;
   transition: all 0.2s ease;
+}
+
+/* ============================================
+   RESPONSIVE - MOBILE MODAL
+   ============================================ */
+
+@media (max-width: 768px) {
+  .modal-horizontal .modal-dialog {
+    max-width: 100%;
+    margin: 0.5rem;
+  }
+
+  .modal-split {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .modal-panel-visual {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 1.5rem 1.5rem 1rem;
+  }
+
+  .modal-visual-title {
+    font-size: 2rem;
+  }
+
+  .modal-visual-title-edit {
+    font-size: 1.6rem;
+  }
+
+  .task-preview-card {
+    display: none;
+  }
+
+  .edit-timeline {
+    flex-direction: row;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .timeline-item {
+    padding-bottom: 0;
+  }
+
+  .timeline-line {
+    display: none;
+  }
+
+  .modal-panel-form {
+    width: 100%;
+    padding: 1.2rem 1.5rem;
+  }
+
+  .status-grid {
+    gap: 0.4rem;
+  }
+
+  .status-block {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.72rem;
+  }
 }
 
 @media (min-width: 992px) {
